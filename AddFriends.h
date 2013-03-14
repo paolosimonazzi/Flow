@@ -10,6 +10,9 @@
 
 @interface AddFriends :  UIViewController <UITableViewDataSource, UITableViewDelegate> {
 
+	int numCells;
+	int numFriends;
+	NSMutableArray *friendsToInvite;
 }
 
 
@@ -19,4 +22,11 @@
 
 @property (nonatomic, retain) IBOutlet	UIView		*loadingPage;
 @property (nonatomic, retain) IBOutlet	UIImageView *gif;
+
+@property (nonatomic, retain)			NSMutableArray *friends;
+
+-(IBAction) inviteFriendsClick:	(id) sender;
+
+-(void)		friendRequest: (int) num;
+
 @end

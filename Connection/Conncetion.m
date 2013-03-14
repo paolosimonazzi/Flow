@@ -129,13 +129,12 @@
 		receivedData = [NSMutableData data];
 	} else {
 	}
-
 }
 
 - (void) loadUsersNetwork {
 	
 
-	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/user/%d/", [User getUser].ID ];
+	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/user/%d/addFriendsPage", [User getUser].ID ];
 	
 	NSLog(@"users request: %@", urlRequest_str);
 	
@@ -167,7 +166,25 @@
 
 	
 }
+// TO DO
+- (void) friendshipRequest:(int) userId {
+	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://glance-server.herokuapp.com/services/trace"]
+															  cachePolicy:NSURLRequestUseProtocolCachePolicy
+														  timeoutInterval:60.0];
+	[theRequest setHTTPMethod:@"PUT"];
+	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+	//[theRequest setValue:[NSString stringWithFormat:@"%d", [jsonData length]] forHTTPHeaderField:@"Content-Length"];
+	//[theRequest setHTTPBody: jsonData];
+	
+	NSURLConnection *theConnection=[[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
+	if (theConnection) {
+		
+		receivedData = [NSMutableData data];
+	} else {
+	}
 
+}
 - (NSArray*)fetchedData:(NSData *)responseData {
 
     NSError* error;
