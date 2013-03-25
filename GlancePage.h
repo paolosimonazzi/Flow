@@ -10,7 +10,8 @@
 
 
 @interface GlancePage : UIViewController <UITableViewDataSource, UITableViewDelegate> {
-	
+
+	NSArray *usersArray;
 }
 
 @property (nonatomic, retain) IBOutlet UITableView *friendsTable;

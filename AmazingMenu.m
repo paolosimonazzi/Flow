@@ -128,11 +128,13 @@
 -(IBAction) backButtonClick:	(id) sender {
 	if (GLANCE == status) {
 		[glancePage.view removeFromSuperview];
+		status = ADDFRIENDS;
 	} else if (ADDFRIENDS == status) {
 		[addFriends.view removeFromSuperview];
+		status = GLANCE;
 	}
-
 }
+
 -(IBAction) glanceButtonClick:	(id) sender {
 	if(nil == glancePage) {
 		glancePage = [[GlancePage alloc]

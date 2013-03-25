@@ -16,7 +16,7 @@
 	int user2Status;
 }
 
-- (void) selectUser:(int)num;
+- (void) selectUser:(int)num withStatus:(int)_status;
 
 @property (nonatomic, assign) int row;
 

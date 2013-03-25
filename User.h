@@ -12,11 +12,10 @@
 	
 }
 
-@property (nonatomic, retain) NSString	*userName;
-@property (nonatomic, retain) NSString	*facebookID;
-@property (nonatomic, assign) int		ID;
-
-@property (nonatomic, retain) NSString *use;
+@property (nonatomic, retain) NSString			*userName;
+@property (nonatomic, retain) NSString			*facebookID;
+@property (nonatomic, assign) unsigned long		ID;
+@property (nonatomic, retain) NSString			*use;
 
 + (User*) getUser;
 

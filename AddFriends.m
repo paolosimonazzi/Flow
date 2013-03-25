@@ -39,16 +39,18 @@
 	[friends removeAllObjects];
 	for (int idx = 0; idx<[usersArray count]; ++idx) {
 		//NSDictionary *dict = [array objectAtIndex:idx] objectForKey:@"username";
-		NSString *userName = [[usersArray objectAtIndex:idx] objectForKey:@"id"];
-
-		NSNumber *isMyfriend = [[usersArray objectAtIndex:idx] objectForKey:@"isMyFriend"];
+		NSDictionary *user = [usersArray objectAtIndex:idx];
 		
-		NSDictionary *profile = [[usersArray objectAtIndex:idx] objectForKey:@"profile"];
+		NSNumber *isMyfriend = [user objectForKey:@"isMyFriend"];
+		
+		NSDictionary *profile = [user objectForKey:@"profile"];
+		
 		NSString *urlImage = [profile objectForKey:@"imageUrl"];
-		if (nil!=urlImage) {
-			NSLog(@"id: %@ - friend: %@", urlImage, [isMyfriend description]);
-			[friends addObject:[usersArray objectAtIndex:idx]];
-		}
+
+		NSLog(@"id: %@ - friend: %@", urlImage, [isMyfriend description]);
+		[friends addObject:user];
+		NSString *friendShipStatus = [user objectForKey:@"friendshipStatus"];
+		
 	}
 	numFriends = [friends count];
 	
@@ -86,6 +88,7 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 #pragma mark - Table's stuff
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -119,14 +122,25 @@
 
 	[friendsToInvite addObject:[friends objectAtIndex:num]];
 }
+- (void) resultBack:(NSData*)_data {
+	
+	NSError* error;
+	
+	NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:_data
+													 options:kNilOptions
+													   error:&error];
+	
+	NSLog(@"friends: %@ -> %@", [dict objectForKey:@"friendId"], [dict objectForKey:@"status"]);
+}
 
--(IBAction) inviteFriendsClick:	(id) sender {
+- (IBAction) inviteFriendsClick:	(id) sender {
 	for (int idx = 0; idx < [friendsToInvite count]; ++idx) {
 		NSNumber *ID = [[friendsToInvite objectAtIndex:idx] objectForKey:@"id"];
 		NSLog(@"I'm gonna invite these fiends: %@ ID:%lu", [[[friendsToInvite objectAtIndex:idx] objectForKey:@"profile"] objectForKey:@"firstName"], [ID longValue]);
+		Connection *friendRequest = [[Connection alloc] initWithTarget:self withSelector:@selector(resultBack:)];
+		[friendRequest friendshipRequest:[ID longValue]];
 	}
 }
-
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
@@ -166,25 +180,6 @@
 	if (idx<numFriends)myCell.user2Label.text = [[friends objectAtIndex:idx] objectForKey:@"firstName"];
 	 */
 	return cell;
-	
-	/*
-	 static NSString *CellIdentifier = @"Cell";
-	 
-	 UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-	 if (cell == nil) {
-	 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-	 }
-	 
-	 // Set the data for this cell:
-	 
-	 cell.textLabel.text = @"ciao";//[dataArray objectAtIndex:indexPath.row];
-	 cell.detailTextLabel.text = @"More text";
-	 cell.imageView.image = [UIImage imageNamed:@"flower.png"];
-	 
-	 // set the accessory view:
-	 cell.accessoryType =  UITableViewCellAccessoryDisclosureIndicator;
-	 return cell;
-	 */
 }
 
 #pragma mark -

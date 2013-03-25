@@ -19,7 +19,7 @@ static User *singleTon = nil;
 	@synchronized (self) {
 		if (nil == singleTon) {
 			singleTon = [[User alloc] init];
-			singleTon.ID = 65536;
+			singleTon.ID = 65536;//229378;
 		}
 	}
 	return singleTon;

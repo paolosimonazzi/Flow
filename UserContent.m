@@ -201,13 +201,21 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker;
 
 - (void)loginViewShowingLoggedInUser:(FBLoginView *)loginView {
     // first get the buttons set for login mode
-    /*
-	self.buttonPostPhoto.enabled = YES;
-    self.buttonPostStatus.enabled = YES;
-    self.buttonPickFriends.enabled = YES;
-    self.buttonPickPlace.enabled = YES;
-	 */
 	NSLog(@"Logged In");
+	
+}
+
+-(void) loginBack:(NSData*)_data {
+	NSError* error;
+
+	NSDictionary *userData = [NSJSONSerialization JSONObjectWithData:_data //1
+									options:kNilOptions
+									  error:&error];
+	
+	NSNumber *userId = [userData objectForKey:@"id"];
+	NSLog(@"idBack: %d", [userId integerValue]);
+	
+	[User getUser].ID = [userId integerValue];
 }
 
 - (void)loginViewFetchedUserInfo:(FBLoginView *)loginView
@@ -225,10 +233,18 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker;
     self.loggedInUser	= user;
 	
 	NSLog(@"user Id %@",user.id);
+	
+	//NSString * accessToken = [[FBSession activeSession] accessToken];
+	
+	//NSLog(@"facebook Token:%@", accessToken);
+	Connection *login = [[Connection alloc] initWithTarget:self withSelector:@selector(loginBack:)];
+
+	[login loging:user.id withToken:[[FBSession activeSession] accessToken ]];
+	
 }
 
 - (void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
-    BOOL canShareAnyhow = [FBNativeDialogs canPresentShareDialogWithSession:nil];
+    //BOOL canShareAnyhow = [FBNativeDialogs canPresentShareDialogWithSession:nil];
     /*
 	self.buttonPostPhoto.enabled = canShareAnyhow;
     self.buttonPostStatus.enabled = canShareAnyhow;

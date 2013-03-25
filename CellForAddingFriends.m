@@ -23,64 +23,72 @@
 		NSArray *nibArray = [[NSBundle mainBundle] loadNibNamed:@"CellForAddingFriends" owner:self options:nil];
 		self = [nibArray objectAtIndex:0];
     }
+
     return self;
 }
-- (void) selectUser:(int)num {
-	
+- (void) selectUser:(int)num withStatus:(int)_status {
+	UIImageView *userSel;
+	switch (num) {
+		case 0:
+			userSel = user0_sel;
+			break;
+		case 1:
+			userSel = user1_sel;
+			break;
+		case 2:
+			userSel = user2_sel;
+			break;
+		default:
+			break;
+	}
+	if (_status) {
+		[userSel setImage:[UIImage imageNamed:@"add_friends_profile_mask_ring.png"]];
+	} else {
+		[userSel setImage:[UIImage imageNamed:@"add_friends_profile_mask_ring_red.png"]];
+	}
 	
 }
 - (void) userSelected:(int)num {
 	float animationTime = 0.5;
+	UIImageView *userSel, *user;
+	CGRect translation;
+	
 	switch (num) {
 		case 0: {
-			[UIView beginAnimations:nil context:NULL];
-			[UIView setAnimationDuration: animationTime];
-			[UIView setAnimationBeginsFromCurrentState:YES];
-			[UIView setAnimationDelegate:self];
-			//[UIView setAnimationDidStopSelector:@selector(animationContentsFeedVersionFinished)];
-			
-			user0_sel.frame = CGRectMake(20, 10, 65, 65);
-			user0.alpha = 1.0;
-			[UIView commitAnimations];
+			translation = CGRectMake(20, 10, 65, 65);;
 			user0Status = 1;
+			userSel = user0_sel;
+			user = user0;
 		}
 			break;
 			
 		case 1: {
-			[UIView beginAnimations:nil context:NULL];
-			[UIView setAnimationDuration: animationTime];
-			[UIView setAnimationBeginsFromCurrentState:YES];
-			[UIView setAnimationDelegate:self];
-			//[UIView setAnimationDidStopSelector:@selector(animationContentsFeedVersionFinished)];
-			
-			user1_sel.frame = CGRectMake(125, 10, 65, 65);
-			user1.alpha = 1.0;
-
-			[UIView commitAnimations];
+			translation = CGRectMake(125, 10, 65, 65);
 			user1Status = 1;
-
+			userSel = user1_sel;
+			user = user1;
 		}
 			break;
 		case 2: {
-			[UIView beginAnimations:nil context:NULL];
-			[UIView setAnimationDuration: animationTime];
-			[UIView setAnimationBeginsFromCurrentState:YES];
-			[UIView setAnimationDelegate:self];
-			//[UIView setAnimationDidStopSelector:@selector(animationContentsFeedVersionFinished)];
-			
-			user2_sel.frame = CGRectMake(230, 10, 65, 65);
-			user2.alpha = 1.0;
-
-			
-			[UIView commitAnimations];
+			translation = CGRectMake(230, 10, 65, 65);
 			user2Status = 1;
+			userSel = user2_sel;
+			user = user2;
 		}
 			break;
-
-			
 		default:
 			break;
 	}
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationDuration: animationTime];
+	[UIView setAnimationBeginsFromCurrentState:YES];
+	[UIView setAnimationDelegate:self];
+	//[UIView setAnimationDidStopSelector:@selector(animationContentsFeedVersionFinished)];
+	
+	userSel.frame = translation;
+	user.alpha = 1.0;
+	[UIView commitAnimations];
+
 }
 - (void) restorePositionItem0 {
 	user0_sel.frame = CGRectMake(-100, 10, 65, 65);

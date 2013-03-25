@@ -8,12 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
+@class AsynchUIImageView;
+
 @interface GlanceCell : UITableViewCell {
 
 
 }
 @property (nonatomic, retain) IBOutlet UIImageView *mask;
-@property (nonatomic, retain) IBOutlet UIImageView *profilePic;
+@property (nonatomic, retain) IBOutlet AsynchUIImageView *profilePic;
+@property (nonatomic, retain) IBOutlet AsynchUIImageView *graphPic;
 
 
 @end

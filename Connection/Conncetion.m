@@ -70,7 +70,22 @@
 - (NSData*) getData {
 	return self->receivedData;
 }
+- (void) loging:(NSString*)_facebookId withToken:(NSString*)_token {
 
+	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/user/facebookLogin?fbId=%@&token=%@", _facebookId, _token];
+	
+	NSLog(@"login request: %@", urlRequest_str);
+	
+	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlRequest_str]
+															  cachePolicy:NSURLRequestUseProtocolCachePolicy
+														  timeoutInterval:60.0];
+	NSURLConnection *theConnection=[[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
+	
+	if (theConnection) {
+		receivedData = [NSMutableData data];
+	} else {
+	}
+}
 - (void) tracePosition:(NSMutableDictionary*) data {
 
 	NSError* error;
@@ -114,7 +129,7 @@
 	
 	NSString *stop_str = [NSString stringWithFormat:@"%d000", (int)[stop timeIntervalSince1970]];
 	
-	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/event/user-65536/%@to%@", start_str, stop_str];
+	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/event/user-%lu/%@to%@",[User getUser].ID, start_str, stop_str];
 	
 	NSLog(@"events request: %@", urlRequest_str);
 	
@@ -163,14 +178,30 @@
 		receivedData = [NSMutableData data];
 	} else {
 	}
-
-	
 }
-// TO DO
-- (void) friendshipRequest:(int) userId {
-	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://glance-server.herokuapp.com/services/trace"]
+- (void) loadGlance {
+	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/user/%lu/glancePage", [User getUser].ID ];
+	
+	NSLog(@"users request: %@", urlRequest_str);
+	
+	
+	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlRequest_str]
 															  cachePolicy:NSURLRequestUseProtocolCachePolicy
 														  timeoutInterval:60.0];
+	NSURLConnection *theConnection=[[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
+	
+	if (theConnection) {
+		receivedData = [NSMutableData data];
+	} else {
+	}
+}
+
+- (void) friendshipRequest:(unsigned long) userId {
+	
+	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/user/%lu/friendship/request-%lu", [User getUser].ID, userId];
+	NSLog(@"friendShip -> %@", urlRequest_str);
+	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlRequest_str]  cachePolicy:NSURLRequestUseProtocolCachePolicy  timeoutInterval:60.0];
+	
 	[theRequest setHTTPMethod:@"PUT"];
 	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];

@@ -10,7 +10,7 @@
 
 @implementation GlanceCell
 
-@synthesize profilePic, mask;
+@synthesize profilePic, mask, graphPic;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

@@ -20,14 +20,18 @@
 	id  target;
 
 }
+- (void) loging:(NSString*)_facebookId withToken:(NSString*)_token;
 
-- (void) tracePosition:(NSMutableDictionary*) data;
-- (void) getEvents:(NSDate*)start stop:(NSDate*) stop;
-- (void) loadImage:(NSString*)_str;
+
+- (void) tracePosition:		(NSMutableDictionary*) data;
+- (void) getEvents:			(NSDate*)start stop:(NSDate*) stop;
+- (void) loadImage:			(NSString*)_str;
 - (void) loadUsersNetwork;
 
+- (void) friendshipRequest:	(unsigned long) userId;
+- (void) loadGlance;
 
-- (id) initWithTarget:(id)_target withSelector:(SEL) _sel;
+- (id)   initWithTarget:	(id)_target withSelector:(SEL) _sel;
 
 @property (nonatomic, retain) id   myDelegate;
 
