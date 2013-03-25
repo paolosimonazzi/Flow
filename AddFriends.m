@@ -167,18 +167,22 @@
 
 	}
 	for (int idz=idx, idy=0; idz<idx+3; ++idz, ++idy) {
-		
+		NSDictionary *user = [friends objectAtIndex:idz];
+		NSDictionary *userProfile = [user objectForKey:@"profile"];
 		if (idz<numFriends) {
-			[myCell setTextForItem:idy text:[[[friends objectAtIndex:idz] objectForKey:@"profile"] objectForKey:@"firstName"]];
-			[myCell setImageUrlForItem:idy url:[[[friends objectAtIndex:idz] objectForKey:@"profile"] objectForKey:@"imageUrl"]];
+			[myCell setTextForItem:idy text:[userProfile objectForKey:@"firstName"]];
+			[myCell setImageUrlForItem:idy url:[userProfile objectForKey:@"imageUrl"]];
+			int friendshipRequest;
+			NSString *fStatus = [user objectForKey:@"friendshipStatus"];
+			NSLog(@"friendship status: %@", fStatus);
+			if ([fStatus isEqualToString:@"ACCEPTED"]) {
+				[myCell selectUser:idy withStatus:FRIENDSALREADY];
+			} else if ([fStatus isEqualToString:@"REQUEST_SENT"]) {
+				[myCell selectUser:idy withStatus:PENDING];
+			}
 		}
 	}
-	/*
-	idx++;
-	if (idx<numFriends)myCell.user1Label.text = [[friends objectAtIndex:idx] objectForKey:@"firstName"];
-	idx++;
-	if (idx<numFriends)myCell.user2Label.text = [[friends objectAtIndex:idx] objectForKey:@"firstName"];
-	 */
+
 	return cell;
 }
 

@@ -28,35 +28,43 @@
 }
 - (void) selectUser:(int)num withStatus:(int)_status {
 	UIImageView *userSel;
+	int			*userStatus=0;
+	
 	switch (num) {
 		case 0:
 			userSel = user0_sel;
+			userStatus = &user0Status;
 			break;
 		case 1:
 			userSel = user1_sel;
+			userStatus = &user1Status;
 			break;
 		case 2:
 			userSel = user2_sel;
+			userStatus = &user2Status;
 			break;
 		default:
 			break;
 	}
-	if (_status) {
+	if (FRIENDSALREADY == _status) {
 		[userSel setImage:[UIImage imageNamed:@"add_friends_profile_mask_ring.png"]];
-	} else {
+	} else if (PENDING == _status) {
 		[userSel setImage:[UIImage imageNamed:@"add_friends_profile_mask_ring_red.png"]];
 	}
+	*userStatus = _status;
+	[self userSelected:num];
 	
 }
 - (void) userSelected:(int)num {
 	float animationTime = 0.5;
 	UIImageView *userSel, *user;
 	CGRect translation;
+	int *userStatus = 0;
 	
 	switch (num) {
 		case 0: {
 			translation = CGRectMake(20, 10, 65, 65);;
-			user0Status = 1;
+			userStatus = &user0Status;
 			userSel = user0_sel;
 			user = user0;
 		}
@@ -64,14 +72,14 @@
 			
 		case 1: {
 			translation = CGRectMake(125, 10, 65, 65);
-			user1Status = 1;
+			userStatus = &user1Status;
 			userSel = user1_sel;
 			user = user1;
 		}
 			break;
 		case 2: {
 			translation = CGRectMake(230, 10, 65, 65);
-			user2Status = 1;
+			userStatus = &user2Status;
 			userSel = user2_sel;
 			user = user2;
 		}
@@ -79,6 +87,7 @@
 		default:
 			break;
 	}
+	//*userStatus = 1;
 	[UIView beginAnimations:nil context:NULL];
 	[UIView setAnimationDuration: animationTime];
 	[UIView setAnimationBeginsFromCurrentState:YES];
@@ -91,6 +100,7 @@
 
 }
 - (void) restorePositionItem0 {
+
 	user0_sel.frame = CGRectMake(-100, 10, 65, 65);
 }
 - (void) restorePositionItem1 {
@@ -102,63 +112,59 @@
 
 - (void) userUnselected:(int)num {
 	float animationTime = 0.5;
+	UIImageView *userSel, *user;
+
+	int *userStatus;
+	
 	switch (num) {
 		case 0: {
-			[UIView beginAnimations:nil context:NULL];
-			[UIView setAnimationDuration: animationTime];
-			[UIView setAnimationBeginsFromCurrentState:YES];
-			[UIView setAnimationDelegate:self];
-			[UIView setAnimationDidStopSelector:@selector(restorePositionItem0)];
-
-			user0_sel.frame = CGRectMake(340, 10, 65, 65);
-			user0.alpha = .5;
-			[UIView commitAnimations];
 			
-			user0Status = 0;
+			userSel = user0_sel;
+			user = user0;
+			userStatus = &user0Status;
 
 		}
 			break;
 			
 		case 1: {
-			[UIView beginAnimations:nil context:NULL];
-			[UIView setAnimationDuration: animationTime];
-			[UIView setAnimationBeginsFromCurrentState:YES];
-			[UIView setAnimationDelegate:self];
-			[UIView setAnimationDidStopSelector:@selector(restorePositionItem1)];
-			
-			user1_sel.frame = CGRectMake(340, 10, 65, 65);
-			user1.alpha = 0.5;
-			
-			[UIView commitAnimations];
-			user1Status = 0;
+
+			userSel = user1_sel;
+			user = user1;
+			userStatus = &user1Status;
 			
 		}
 			break;
 		case 2: {
-			[UIView beginAnimations:nil context:NULL];
-			[UIView setAnimationDuration: animationTime];
-			[UIView setAnimationBeginsFromCurrentState:YES];
-			[UIView setAnimationDelegate:self];
-			[UIView setAnimationDidStopSelector:@selector(restorePositionItem2)];
-			
-			user2_sel.frame = CGRectMake(340, 10, 65, 65);
-			user2.alpha = 0.5;
-			
-			[UIView commitAnimations];
-			user2Status = 0;
+			userSel = user2_sel;
+			user = user2;
+			userStatus = &user2Status;
 			
 		}
 			break;
-			
-			
 		default:
 			break;
 	}
+
+	[UIView beginAnimations:nil context:nil];
+	[UIView setAnimationDuration: animationTime];
+	[UIView setAnimationBeginsFromCurrentState:YES];
+	[UIView setAnimationDelegate:self];
+	if (0 == num)
+		[UIView setAnimationDidStopSelector:@selector(restorePositionItem0)];
+	else if (1 == num)
+		[UIView setAnimationDidStopSelector:@selector(restorePositionItem1)];
+	else if (2 == num)
+		[UIView setAnimationDidStopSelector:@selector(restorePositionItem2)];
+	
+	userSel.frame = CGRectMake(340, 10, 65, 65);;
+	user.alpha = .5;
+	[UIView commitAnimations];
+	
 }
 
 -(IBAction) user0Click:	(id) sender {
 	if (!user0Status) {
-		[self userSelected:0];
+		[self selectUser:0 withStatus:0];
 		[addFriendsRef friendRequest:row*3];
 	}
 	else {
@@ -167,8 +173,7 @@
 }
 -(IBAction) user1Click:	(id) sender {
 	if (!user1Status) {
-		//user1_sel.frame = CGRectMake(-100, 10, 65, 65);
-		[self userSelected:1];
+		[self selectUser:1 withStatus:0];
 		[addFriendsRef friendRequest:row*3+1];
 	}
 	else {
@@ -177,7 +182,7 @@
 }
 -(IBAction) user2Click:	(id) sender {
 	if (!user2Status) {
-		[self userSelected:2];
+		[self selectUser:2 withStatus:0];
 		[addFriendsRef friendRequest:row*3+2];
 	}
 	else {

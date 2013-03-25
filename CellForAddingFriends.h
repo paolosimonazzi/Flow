@@ -10,6 +10,12 @@
 
 @class AsynchUIImageView, AddFriends;
 
+enum CellStatus {
+	NONE = 0,
+	FRIENDSALREADY,
+	PENDING
+};
+
 @interface CellForAddingFriends : UITableViewCell {
 	int user0Status;
 	int user1Status;
