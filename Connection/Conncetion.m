@@ -195,18 +195,14 @@
 	} else {
 	}
 }
-
-- (void) friendshipRequest:(unsigned long) userId {
-	
-	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/user/%lu/friendship/request-%lu", [User getUser].ID, userId];
+- (void) friendshipNomore:(unsigned long) userId {
+	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/user/%lu/friendship/%lu", [User getUser].ID, userId];
 	NSLog(@"friendShip -> %@", urlRequest_str);
 	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlRequest_str]  cachePolicy:NSURLRequestUseProtocolCachePolicy  timeoutInterval:60.0];
 	
-	[theRequest setHTTPMethod:@"PUT"];
+	[theRequest setHTTPMethod:@"DELETE"];
 	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-	//[theRequest setValue:[NSString stringWithFormat:@"%d", [jsonData length]] forHTTPHeaderField:@"Content-Length"];
-	//[theRequest setHTTPBody: jsonData];
 	
 	NSURLConnection *theConnection=[[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
 	if (theConnection) {
@@ -216,6 +212,63 @@
 	}
 
 }
+- (void) friendshipRequest:(unsigned long) userId {
+	
+	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/user/%lu/friendship/request-%lu", [User getUser].ID, userId];
+	NSLog(@"friendShip -> %@", urlRequest_str);
+	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlRequest_str]  cachePolicy:NSURLRequestUseProtocolCachePolicy  timeoutInterval:60.0];
+	
+	[theRequest setHTTPMethod:@"PUT"];
+	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+	
+	NSURLConnection *theConnection=[[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
+	if (theConnection) {
+		
+		receivedData = [NSMutableData data];
+	} else {
+	}
+
+}
+
+- (void) friendshipAccept:(unsigned long) userId {
+	
+	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/user/%lu/friendship/accept-%lu", [User getUser].ID, userId];
+	NSLog(@"friendShip -> %@", urlRequest_str);
+	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlRequest_str]  cachePolicy:NSURLRequestUseProtocolCachePolicy  timeoutInterval:60.0];
+	
+	[theRequest setHTTPMethod:@"PUT"];
+	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+	
+	NSURLConnection *theConnection=[[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
+	if (theConnection) {
+		
+		receivedData = [NSMutableData data];
+	} else {
+	}
+	
+}
+- (void) friendshipDecline:(unsigned long) userId {
+	
+	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/user/%lu/friendship/decline-%lu", [User getUser].ID, userId];
+	NSLog(@"friendShip -> %@", urlRequest_str);
+	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlRequest_str]  cachePolicy:NSURLRequestUseProtocolCachePolicy  timeoutInterval:60.0];
+	
+	[theRequest setHTTPMethod:@"PUT"];
+	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+	
+	NSURLConnection *theConnection=[[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
+	if (theConnection) {
+		
+		receivedData = [NSMutableData data];
+	} else {
+	}
+	
+}
+
+
 - (NSArray*)fetchedData:(NSData *)responseData {
 
     NSError* error;

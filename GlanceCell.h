@@ -8,15 +8,27 @@
 
 #import <UIKit/UIKit.h>
 
-@class AsynchUIImageView;
+@class AsynchUIImageView, GlancePage;
 
 @interface GlanceCell : UITableViewCell {
 
 
 }
+@property (nonatomic, assign) int row;
+@property (nonatomic, retain) GlancePage *GlancePageRef;
 @property (nonatomic, retain) IBOutlet UIImageView *mask;
 @property (nonatomic, retain) IBOutlet AsynchUIImageView *profilePic;
 @property (nonatomic, retain) IBOutlet AsynchUIImageView *graphPic;
 
+- (void) acceptanceVersion;
+- (void) normalVersion;
+
+@property (nonatomic, retain) IBOutlet UIButton *acceptButton;
+@property (nonatomic, retain) IBOutlet UIButton *declineButton;
+
+@property (nonatomic, retain) IBOutlet UILabel  *name;
+
+-(IBAction) acceptClick:	(id) sender;
+-(IBAction) declineClick:	(id) sender;
 
 @end

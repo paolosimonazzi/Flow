@@ -23,50 +23,52 @@
 		NSArray *nibArray = [[NSBundle mainBundle] loadNibNamed:@"CellForAddingFriends" owner:self options:nil];
 		self = [nibArray objectAtIndex:0];
     }
-
     return self;
 }
-- (void) selectUser:(int)num withStatus:(int)_status {
+
+- (void) selectStatusCell:(int)_ncell withStatus:(int)_status {
+
 	UIImageView *userSel;
-	int			*userStatus=0;
-	
-	switch (num) {
+
+	int		*userStatus = 0;
+
+	switch (_ncell) {
 		case 0:
-			userSel = user0_sel;
 			userStatus = &user0Status;
+			userSel = user0_sel;
 			break;
 		case 1:
-			userSel = user1_sel;
 			userStatus = &user1Status;
+			userSel = user1_sel;
 			break;
 		case 2:
-			userSel = user2_sel;
 			userStatus = &user2Status;
+			userSel = user2_sel;
 			break;
 		default:
 			break;
 	}
+	*userStatus = _status;
 	if (FRIENDSALREADY == _status) {
 		[userSel setImage:[UIImage imageNamed:@"add_friends_profile_mask_ring.png"]];
 	} else if (PENDING == _status) {
 		[userSel setImage:[UIImage imageNamed:@"add_friends_profile_mask_ring_red.png"]];
 	}
-	*userStatus = _status;
-	[self userSelected:num];
-	
+
 }
-- (void) userSelected:(int)num {
+- (void) userSelected:(int)num changingStatus:(BOOL)_sta {
 	float animationTime = 0.5;
 	UIImageView *userSel, *user;
 	CGRect translation;
 	int *userStatus = 0;
-	
+	BOOL *userSelected;
 	switch (num) {
 		case 0: {
 			translation = CGRectMake(20, 10, 65, 65);;
 			userStatus = &user0Status;
 			userSel = user0_sel;
 			user = user0;
+			userSelected = &user0Selected;
 		}
 			break;
 			
@@ -75,6 +77,7 @@
 			userStatus = &user1Status;
 			userSel = user1_sel;
 			user = user1;
+			userSelected = &user1Selected;
 		}
 			break;
 		case 2: {
@@ -82,12 +85,13 @@
 			userStatus = &user2Status;
 			userSel = user2_sel;
 			user = user2;
+			userSelected = &user2Selected;
 		}
 			break;
 		default:
 			break;
 	}
-	//*userStatus = 1;
+	*userSelected = TRUE;
 	[UIView beginAnimations:nil context:NULL];
 	[UIView setAnimationDuration: animationTime];
 	[UIView setAnimationBeginsFromCurrentState:YES];
@@ -97,6 +101,9 @@
 	userSel.frame = translation;
 	user.alpha = 1.0;
 	[UIView commitAnimations];
+	
+	if (_sta)
+		[self selectStatusCell:num withStatus:PENDING];
 
 }
 - (void) restorePositionItem0 {
@@ -113,38 +120,36 @@
 - (void) userUnselected:(int)num {
 	float animationTime = 0.5;
 	UIImageView *userSel, *user;
-
+	BOOL *userSelected;
 	int *userStatus;
 	
 	switch (num) {
 		case 0: {
-			
 			userSel = user0_sel;
 			user = user0;
 			userStatus = &user0Status;
-
+			userSelected = &user0Selected;
 		}
 			break;
 			
 		case 1: {
-
 			userSel = user1_sel;
 			user = user1;
 			userStatus = &user1Status;
-			
+			userSelected = &user1Selected;
 		}
 			break;
 		case 2: {
 			userSel = user2_sel;
 			user = user2;
 			userStatus = &user2Status;
-			
+			userSelected = &user2Selected;
 		}
 			break;
 		default:
 			break;
 	}
-
+	*userSelected = FALSE;
 	[UIView beginAnimations:nil context:nil];
 	[UIView setAnimationDuration: animationTime];
 	[UIView setAnimationBeginsFromCurrentState:YES];
@@ -155,7 +160,7 @@
 		[UIView setAnimationDidStopSelector:@selector(restorePositionItem1)];
 	else if (2 == num)
 		[UIView setAnimationDidStopSelector:@selector(restorePositionItem2)];
-	
+	*userStatus = NONE;
 	userSel.frame = CGRectMake(340, 10, 65, 65);;
 	user.alpha = .5;
 	[UIView commitAnimations];
@@ -163,29 +168,32 @@
 }
 
 -(IBAction) user0Click:	(id) sender {
-	if (!user0Status) {
-		[self selectUser:0 withStatus:0];
+	if (NO == user0Selected) {
+		[self userSelected:0 changingStatus:YES];
 		[addFriendsRef friendRequest:row*3];
 	}
 	else {
+		[addFriendsRef friendshipNoMore:row*3];
 		[self userUnselected:0];
 	}
 }
 -(IBAction) user1Click:	(id) sender {
-	if (!user1Status) {
-		[self selectUser:1 withStatus:0];
+	if (NO==user1Selected) {
+		[self userSelected:1 changingStatus:YES];
 		[addFriendsRef friendRequest:row*3+1];
 	}
 	else {
+		[addFriendsRef friendshipNoMore:row*3+1];
 		[self userUnselected:1];
 	}
 }
 -(IBAction) user2Click:	(id) sender {
-	if (!user2Status) {
-		[self selectUser:2 withStatus:0];
+	if (NO==user2Status) {
+		[self userSelected:2 changingStatus:YES];
 		[addFriendsRef friendRequest:row*3+2];
 	}
 	else {
+		[addFriendsRef friendshipNoMore:row*3+2];
 		[self userUnselected:2];
 	}
 }

@@ -20,13 +20,17 @@ enum CellStatus {
 	int user0Status;
 	int user1Status;
 	int user2Status;
+	
+	BOOL user0Selected;
+	BOOL user1Selected;
+	BOOL user2Selected;
 }
 
-- (void) selectUser:(int)num withStatus:(int)_status;
+
 
 @property (nonatomic, assign) int row;
 
-@property (nonatomic, retain) IBOutlet AddFriends *addFriendsRef;
+@property (nonatomic, retain) AddFriends *addFriendsRef;
 
 @property (nonatomic, retain) IBOutlet AsynchUIImageView *user0;
 @property (nonatomic, retain) IBOutlet AsynchUIImageView *user1;
@@ -49,9 +53,13 @@ enum CellStatus {
 -(IBAction) user2Click:	(id) sender;
 
 
-- (void) userSelected:(int) num;
+- (void) userSelected:(int)num changingStatus:(BOOL)_sta;
+
 - (void) hideItems:(int) num;
 
 - (void) setTextForItem:(int)num text:(NSString*)str;
 - (void) setImageUrlForItem:(int)num url:(NSString*)url_str;
+
+- (void) selectStatusCell:(int)_ncell withStatus:(int)_status;
+
 @end

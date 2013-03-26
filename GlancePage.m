@@ -52,6 +52,31 @@
 	[self loadNetwork];
 	//[self.view addSubview:loadingPage];
 }
+
+- (void) friendshipDataBack:(NSData*)_data {
+
+}
+- (void) acceptFriendship:(int) _row {
+	
+	NSDictionary *user = [usersArray objectAtIndex:_row];
+	
+	NSNumber *ID = [user objectForKey:@"id"];
+	
+	Connection *friendAccepted = [[Connection alloc] initWithTarget:self withSelector:@selector(friendshipDataBack:)];
+	[friendAccepted friendshipAccept:[ID longValue]];
+	
+}
+- (void) declineFriendship:(int) _row {
+
+	NSDictionary *user = [usersArray objectAtIndex:_row];
+	
+	NSNumber *ID = [user objectForKey:@"id"];
+	
+	Connection *friendAccepted = [[Connection alloc] initWithTarget:self withSelector:@selector(friendshipDataBack:)];
+	[friendAccepted friendshipDecline:[ID longValue]];
+
+}
+
 #pragma -
 
 #pragma mark - Table's stuff
@@ -86,7 +111,12 @@
 	if ( nil == cell ) {
 		cell = [[GlanceCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 	}
+	
 	GlanceCell *myCell = (GlanceCell*)cell;
+	
+	myCell.row = indexPath.row;
+	myCell.GlancePageRef = self;
+	
 	NSDictionary *user = [usersArray objectAtIndex:indexPath.row];
 	NSDictionary *userProfile = [user objectForKey:@"profile"];
 	
@@ -95,7 +125,15 @@
 
 	[myCell.profilePic loadImageAsync:[userProfile objectForKey:@"imageUrl"]];
 	[myCell.graphPic loadImageAsync:[user objectForKey:@"wavelinePreviewUrl"]];
-	NSLog(@"user pic:%@", [userProfile objectForKey:@"imageUrl"]);
+	
+	myCell.name.text = [userProfile objectForKey:@"firstName"];
+	
+	NSString *fStatus = [user objectForKey:@"friendshipStatus"];
+
+	if ([fStatus isEqualToString:@"REQUEST_RECEIVED"]) {
+		[myCell acceptanceVersion];
+	}
+
 	return cell;
 	
 }

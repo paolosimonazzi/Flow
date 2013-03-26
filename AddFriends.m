@@ -62,6 +62,7 @@
 - (void)viewWillAppear:(BOOL)animated {    // Called when the view is about to made visible. Default does nothing
 	[self loadNetwork];
 	[self.view addSubview:loadingPage];
+	[friendsToInvite removeAllObjects];
 }
 
 - (void) loadNetwork {
@@ -118,9 +119,17 @@
     return ( numCells + (numFriends%3?1:0));
 }
 
--(void) friendRequest: (int) num {
+- (void) friendRequest: (int) num {
 
 	[friendsToInvite addObject:[friends objectAtIndex:num]];
+}
+- (void) friendshipNoMore: (int) num {
+
+	NSNumber *ID = [[friends objectAtIndex:num] objectForKey:@"id"];
+	NSLog(@"I'm gonna delete this poor fiend: %@ ID:%lu", [[[friends objectAtIndex:num] objectForKey:@"profile"] objectForKey:@"firstName"], [ID longValue]);
+	Connection *friendRequest = [[Connection alloc] initWithTarget:self withSelector:@selector(resultBack:)];
+	[friendRequest friendshipNomore:[ID longValue]];
+
 }
 - (void) resultBack:(NSData*)_data {
 	
@@ -167,18 +176,21 @@
 
 	}
 	for (int idz=idx, idy=0; idz<idx+3; ++idz, ++idy) {
+		if (idz>=numFriends) break;
 		NSDictionary *user = [friends objectAtIndex:idz];
 		NSDictionary *userProfile = [user objectForKey:@"profile"];
 		if (idz<numFriends) {
 			[myCell setTextForItem:idy text:[userProfile objectForKey:@"firstName"]];
 			[myCell setImageUrlForItem:idy url:[userProfile objectForKey:@"imageUrl"]];
-			int friendshipRequest;
+
 			NSString *fStatus = [user objectForKey:@"friendshipStatus"];
-			NSLog(@"friendship status: %@", fStatus);
+
 			if ([fStatus isEqualToString:@"ACCEPTED"]) {
-				[myCell selectUser:idy withStatus:FRIENDSALREADY];
+				[myCell selectStatusCell:idy withStatus:FRIENDSALREADY];
+				[myCell userSelected:idy changingStatus:NO];
 			} else if ([fStatus isEqualToString:@"REQUEST_SENT"]) {
-				[myCell selectUser:idy withStatus:PENDING];
+				[myCell selectStatusCell:idy withStatus:PENDING];
+				[myCell userSelected:idy changingStatus:NO];
 			}
 		}
 	}

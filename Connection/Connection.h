@@ -29,6 +29,11 @@
 - (void) loadUsersNetwork;
 
 - (void) friendshipRequest:	(unsigned long) userId;
+- (void) friendshipNomore:  (unsigned long) userId;
+- (void) friendshipAccept:	(unsigned long) userId;
+- (void) friendshipDecline:	(unsigned long) userId;
+
+
 - (void) loadGlance;
 
 - (id)   initWithTarget:	(id)_target withSelector:(SEL) _sel;

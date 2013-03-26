@@ -16,4 +16,7 @@
 
 @property (nonatomic, retain) IBOutlet UITableView *friendsTable;
 
+- (void) acceptFriendship:(int) _row;
+- (void) declineFriendship:(int) _row;
+
 @end

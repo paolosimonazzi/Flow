@@ -25,8 +25,8 @@
 
 @property (nonatomic, retain)			NSMutableArray *friends;
 
--(IBAction) inviteFriendsClick:	(id) sender;
+- (IBAction) inviteFriendsClick:	(id) sender;
 
--(void)		friendRequest: (int) num;
-
+- (void)	 friendRequest:		(int) num;
+- (void)     friendshipNoMore:	(int) num;
 @end
