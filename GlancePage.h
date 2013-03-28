@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
+@class AmazingMenu;
 
 @interface GlancePage : UIViewController <UITableViewDataSource, UITableViewDelegate> {
 
@@ -15,8 +16,11 @@
 }
 
 @property (nonatomic, retain) IBOutlet UITableView *friendsTable;
+@property (nonatomic, retain) AmazingMenu *menuRef;
 
+@property (nonatomic, retain) UIView *loadingPage;
 - (void) acceptFriendship:(int) _row;
 - (void) declineFriendship:(int) _row;
+
 
 @end

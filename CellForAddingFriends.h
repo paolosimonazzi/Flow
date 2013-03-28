@@ -16,6 +16,19 @@ enum CellStatus {
 	PENDING
 };
 
+@interface cellPart : UIView {
+	int userStatus;
+	BOOL userSelected;
+}
+@property (nonatomic, retain) IBOutlet AsynchUIImageView *user;
+@property (nonatomic, retain) IBOutlet UIImageView *user_sel;
+@property (nonatomic, retain) IBOutlet UILabel *userLabel;
+@property (nonatomic, retain) IBOutlet UIButton *userButton;
+
+-(IBAction) userClick:	(id) sender;
+
+@end
+
 @interface CellForAddingFriends : UITableViewCell {
 	int user0Status;
 	int user1Status;
@@ -24,6 +37,9 @@ enum CellStatus {
 	BOOL user0Selected;
 	BOOL user1Selected;
 	BOOL user2Selected;
+	
+	int friendToRemove;
+	int friendToUnselect;
 }
 
 
@@ -48,10 +64,7 @@ enum CellStatus {
 @property (nonatomic, retain) IBOutlet UIButton *user1Button;
 @property (nonatomic, retain) IBOutlet UIButton *user2Button;
 
--(IBAction) user0Click:	(id) sender;
--(IBAction) user1Click:	(id) sender;
--(IBAction) user2Click:	(id) sender;
-
+-(IBAction) userClick:	(id) sender;
 
 - (void) userSelected:(int)num changingStatus:(BOOL)_sta;
 

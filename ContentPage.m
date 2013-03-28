@@ -36,10 +36,12 @@
 	
 	NSLog(@"location dict: %@", street_str);
 	if (_num) {
-		[image1 loadImageAsync:url_str];
+
+		[image1 loadImageAsync:[url_str stringByReplacingOccurrencesOfString:@"200x200" withString:@"640x336"]];
+		
 		street1.text = [[_dict objectForKey:@"location"] objectForKey:@"address"];
 	} else {
-		[image2 loadImageAsync:url_str];
+		[image2 loadImageAsync:[url_str stringByReplacingOccurrencesOfString:@"200x200" withString:@"640x336"]];
 		street2.text = [[_dict objectForKey:@"location"] objectForKey:@"address"];
 	}
 }
@@ -59,15 +61,30 @@
 @end
 @implementation AsynchUIImageView
 
+@synthesize activityIndicator;
 - (void) contentsBack:(NSData*)_data {
 	
 	[self setImage:[UIImage imageWithData:_data]];
+	
+	[activityIndicator removeFromSuperview];
 }
 
 - (void) loadImageAsync:(NSString*)_url {
 	
 	Connection *connectionForTheImage = [[Connection alloc] initWithTarget:self withSelector:@selector(contentsBack:)];
 	[connectionForTheImage loadImage:_url];
+	
+	// create activity indicator
+	if (!activityIndicator) {
+		CGRect myRect = self.frame;
+
+		activityIndicator = [[UIActivityIndicatorView alloc]
+												  initWithFrame:CGRectMake(myRect.size.width/2-10, myRect.size.height/2-10, 20.0f, 20.0f)];
+		[activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
+	}
+	
+	[self addSubview:activityIndicator];
+	[activityIndicator startAnimating];
 
 }
 

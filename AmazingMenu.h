@@ -44,6 +44,6 @@ enum MenuStatus {
 -(IBAction) shareButtonClick:	(id) sender;
 -(IBAction) dotsButtonClick:	(id) sender;
 
-
+- (UIView*) getLoadingPage;
 
 @end

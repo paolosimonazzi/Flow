@@ -51,7 +51,7 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker;
 	
     [loginview sizeToFit];
 	
-	//gpsManager = [[GPS alloc] init];
+	gpsManager = [[GPS alloc] init];
 	[profileView addSubview:loginview];
 	profileView.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 	
@@ -61,7 +61,6 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker;
 
 	contentPages = [[NSMutableArray alloc] initWithObjects:profileView, nil];
 
-	[self getEvents];
 	
 	[self menuCreation];
 	
@@ -96,7 +95,6 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker;
     [UIView commitAnimations];
 
 }
-
 
 - (void) scrollAtPage:(int) page {
 	
@@ -216,6 +214,9 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker;
 	NSLog(@"idBack: %d", [userId integerValue]);
 	
 	[User getUser].ID = [userId integerValue];
+
+	[self getEvents];
+
 }
 
 - (void)loginViewFetchedUserInfo:(FBLoginView *)loginView

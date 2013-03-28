@@ -107,7 +107,6 @@
 
 }
 - (void) restorePositionItem0 {
-
 	user0_sel.frame = CGRectMake(-100, 10, 65, 65);
 }
 - (void) restorePositionItem1 {
@@ -166,37 +165,48 @@
 	[UIView commitAnimations];
 	
 }
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 1) {
+		[addFriendsRef friendshipNoMore:friendToRemove];
+		[self userUnselected:friendToUnselect];
+    }
+}
+-(void) userAction:(int) user {
+	BOOL *userSelected;
+	switch (user) {
+		case 0:
+			userSelected = &user0Selected;
+			break;
+		case 1:
+			userSelected = &user1Selected;
+			break;
+		case 2:
+			userSelected = &user2Selected;
+			break;
+		default:
+			break;
+	}
+	
+	if ( NO == *userSelected ) {
+		[self userSelected:user changingStatus:YES];
+		[addFriendsRef friendRequest:row*3+user];
+	} else {
+		UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Frank?" message:@"Do you really want to do this?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:nil];
+		[message addButtonWithTitle:@"Yes"];
+		[message show];
+		friendToRemove = row*3+user;
+		friendToUnselect = user;
+ 		/* 
+		[addFriendsRef friendshipNoMore:row*3+user];
+		[self userUnselected:user];
+		 */
+	}
+}
+-(IBAction) userClick:	(id) sender {
+	UIButton *button = (UIButton*)sender;
+	[self userAction:button.tag];
+}
 
--(IBAction) user0Click:	(id) sender {
-	if (NO == user0Selected) {
-		[self userSelected:0 changingStatus:YES];
-		[addFriendsRef friendRequest:row*3];
-	}
-	else {
-		[addFriendsRef friendshipNoMore:row*3];
-		[self userUnselected:0];
-	}
-}
--(IBAction) user1Click:	(id) sender {
-	if (NO==user1Selected) {
-		[self userSelected:1 changingStatus:YES];
-		[addFriendsRef friendRequest:row*3+1];
-	}
-	else {
-		[addFriendsRef friendshipNoMore:row*3+1];
-		[self userUnselected:1];
-	}
-}
--(IBAction) user2Click:	(id) sender {
-	if (NO==user2Status) {
-		[self userSelected:2 changingStatus:YES];
-		[addFriendsRef friendRequest:row*3+2];
-	}
-	else {
-		[addFriendsRef friendshipNoMore:row*3+2];
-		[self userUnselected:2];
-	}
-}
 - (void) hideItems:(int) num {
 	if (2 == num) {
 		user2.hidden = TRUE; user2Label.hidden = TRUE;

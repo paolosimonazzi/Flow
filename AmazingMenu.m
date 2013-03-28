@@ -140,10 +140,11 @@
 		glancePage = [[GlancePage alloc]
 				  initWithNibName:@"GlancePage" bundle:[NSBundle mainBundle]];
 	}
+	glancePage.menuRef = self;
+
 	CGRect frame = glancePage.view.frame;
 	glancePage.view.frame = CGRectMake(frame.origin.x, 40, frame.size.width, frame.size.height);
 	[userContent.view addSubview:glancePage.view];
-	
 	[self glanceVersion];
 
 }
@@ -151,6 +152,7 @@
 	self.view.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 
 }
+
 -(IBAction) dotsButtonClick:	(id) sender {
 	if (nil == addFriends) {
 		addFriends = [[AddFriends alloc] initWithNibName:@"AddFriends" bundle:[NSBundle mainBundle]];
@@ -163,5 +165,13 @@
 	[self addFriendsVersion];
 
 }
+- (UIView*) getLoadingPage {
+	if (nil == addFriends) {
+		addFriends = [[AddFriends alloc] initWithNibName:@"AddFriends" bundle:[NSBundle mainBundle]];
+	}
+	CGRect frame = addFriends.view.frame;
+	addFriends.view.frame = CGRectMake(frame.origin.x, 40, frame.size.width, frame.size.height);
 
+	return addFriends.loadingPage;
+}
 @end

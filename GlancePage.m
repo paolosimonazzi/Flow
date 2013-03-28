@@ -10,6 +10,7 @@
 #import "GlanceCell.h"
 #import "Connection.h"
 #import "ContentPage.h"
+#import "AmazingMenu.h"
 
 @interface GlancePage ()
 
@@ -17,7 +18,7 @@
 
 @implementation GlancePage
 
-@synthesize friendsTable;
+@synthesize friendsTable, menuRef, loadingPage;
 
 #pragma mark - Connection
 - (void) usersBack:(NSData*)_data {
@@ -39,7 +40,7 @@
 	
 	//NSLog(@"num users: %d", numFriends);
 	[self.friendsTable reloadData];
-	//[loadingPage removeFromSuperview];
+	[loadingPage removeFromSuperview];
 }
 
 - (void) loadNetwork {
@@ -49,6 +50,8 @@
 	
 }
 - (void)viewWillAppear:(BOOL)animated {    // Called when the view is about to made visible. Default does nothing
+
+	[self.view addSubview:loadingPage];
 	[self loadNetwork];
 	//[self.view addSubview:loadingPage];
 }
@@ -156,6 +159,7 @@
 	//friendsTable.delegate = self;
 	
     // Do any additional setup after loading the view from its nib.
+	loadingPage = [menuRef getLoadingPage];
 }
 
 - (void)didReceiveMemoryWarning

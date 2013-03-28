@@ -14,6 +14,8 @@
 
 -(void) loadImageAsync:(NSString*)_url;
 
+@property (nonatomic, retain)	UIActivityIndicatorView *activityIndicator;
+
 @end
 
 
