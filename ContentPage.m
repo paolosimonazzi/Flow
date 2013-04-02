@@ -15,7 +15,7 @@
 
 @implementation ContentPage
 
-@synthesize image1, image2, street1, street2;
+@synthesize image1, image2, street1, street2, subtitle1_1, subtitle1_2, subtitle2_1, subtitle2_2;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -30,21 +30,40 @@
 - (void) loadContent:(int)_num withData:(NSDictionary*)_dict {
 
 	//NSLog(@"content dict: %@", [_dict description]);
-	NSString *url_str = [[[_dict objectForKey:@"media"] objectAtIndex:0] objectForKey:@"url"];
-	
-	NSString *street_str = [[_dict objectForKey:@"location"] objectForKey:@"address"];
-	
-	NSLog(@"location dict: %@", street_str);
-	if (_num) {
 
-		[image1 loadImageAsync:[url_str stringByReplacingOccurrencesOfString:@"200x200" withString:@"640x336"]];
-		
-		street1.text = [[_dict objectForKey:@"location"] objectForKey:@"address"];
+	NSString *url_str = [_dict objectForKey:@"imageUrl"];
+	NSString *street_str = [[_dict objectForKey:@"location"] objectForKey:@"address"];
+
+	NSString *imageUrl;
+	
+	if ([url_str rangeOfString:@"place"].location == NSNotFound) {
+		NSLog(@"street!");
+		imageUrl = [url_str stringByReplacingOccurrencesOfString:@"200x200" withString:@"640x336"];
 	} else {
-		[image2 loadImageAsync:[url_str stringByReplacingOccurrencesOfString:@"200x200" withString:@"640x336"]];
-		street2.text = [[_dict objectForKey:@"location"] objectForKey:@"address"];
+		NSLog(@"place!");
+		imageUrl = [url_str stringByReplacingOccurrencesOfString:@"height=200" withString:@"width=640"];
+	}
+	
+	NSLog(@"%@", imageUrl);
+	
+	if (_num) {
+		
+		[image1 loadImageAsync:	imageUrl];
+		street1.text = [_dict objectForKey:@"title"];
+		subtitle1_1.text = [_dict objectForKey:@"subtitle1"];
+		subtitle1_2.text = [_dict objectForKey:@"subtitle2"];
+
+	} else {
+		[image2 loadImageAsync:imageUrl];
+		street2.text = [_dict objectForKey:@"title"];
+		subtitle2_1.text = [_dict objectForKey:@"subtitle1"];
+		subtitle2_2.text = [_dict objectForKey:@"subtitle2"];
+
 	}
 }
+/*
+ [image2 loadImageAsync:[url_str stringByReplacingOccurrencesOfString:@"200x200" withString:@"640x336"]];
+ */
 
 - (void)viewDidLoad
 {

@@ -16,7 +16,7 @@
 @end
 
 @implementation AddFriends
-@synthesize friendsToAddTable, usersArray, loadingPage, friends;
+@synthesize friendsToAddTable, usersArray, loadingPage, friends, labelForFriends;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -63,6 +63,7 @@
 	[self loadNetwork];
 	[self.view addSubview:loadingPage];
 	[friendsToInvite removeAllObjects];
+	labelForFriends.alpha = 0;
 }
 
 - (void) loadNetwork {
@@ -118,10 +119,47 @@
 	numCells = numFriends/3;//[friends count]/3;
     return ( numCells + (numFriends%3?1:0));
 }
+- (void) friendShipAnimationFinished {
+	[UIView beginAnimations:nil context:nil];
+	[UIView setAnimationDuration: 2.];
+	[UIView setAnimationBeginsFromCurrentState:YES];
+	[UIView setAnimationDelegate:self];
 
+	
+	labelForFriends.alpha = 0;
+	[UIView commitAnimations];
+
+
+}
+- (void) friendShipAnimation:(NSString*) name {
+	
+	NSString *message = [NSString stringWithFormat:@"You've invited: %@!", name];
+
+	labelForFriends.text = message;
+	[UIView beginAnimations:nil context:nil];
+	[UIView setAnimationDuration: 2.];
+	[UIView setAnimationBeginsFromCurrentState:YES];
+	[UIView setAnimationDelegate:self];
+	[UIView setAnimationDidStopSelector:@selector(friendShipAnimationFinished)];
+
+	
+	labelForFriends.alpha = 1;
+	[UIView commitAnimations];
+
+
+}
 - (void) friendRequest: (int) num {
 
 	[friendsToInvite addObject:[friends objectAtIndex:num]];
+	
+	NSNumber *ID = [[friends objectAtIndex:num] objectForKey:@"id"];
+	
+	NSLog(@"I'm gonna invite these fiends: %@ ID:%lu", [[[friends objectAtIndex:num] objectForKey:@"profile"] objectForKey:@"firstName"], [ID longValue]);
+	Connection *friendRequest = [[Connection alloc] initWithTarget:self withSelector:@selector(resultBack:)];
+	[friendRequest friendshipRequest:[ID longValue]];
+	
+	[self friendShipAnimation:[[[friends objectAtIndex:num] objectForKey:@"profile"] objectForKey:@"firstName"]];
+	
 }
 - (void) friendshipNoMore: (int) num {
 
@@ -141,7 +179,7 @@
 	
 	NSLog(@"friends: %@ -> %@", [dict objectForKey:@"friendId"], [dict objectForKey:@"status"]);
 }
-
+/*
 - (IBAction) inviteFriendsClick:	(id) sender {
 	for (int idx = 0; idx < [friendsToInvite count]; ++idx) {
 		NSNumber *ID = [[friendsToInvite objectAtIndex:idx] objectForKey:@"id"];
@@ -150,6 +188,7 @@
 		[friendRequest friendshipRequest:[ID longValue]];
 	}
 }
+ */
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 

@@ -10,6 +10,7 @@
 #import "GlancePage.h"
 #import "UserContent.h"
 #import "AddFriends.h"
+#import "Settings.h"
 
 @interface AmazingMenu ()
 
@@ -17,8 +18,8 @@
 
 @implementation AmazingMenu
 
-@synthesize backButton, dotsButton, shareButton, glanceButton,
-			status, userContent, addFriends;
+@synthesize backButton, dotsButton, addFriendsButton, glanceButton,
+			status, userContent, addFriends, settings;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -41,7 +42,7 @@
     
 	
 	glanceButton.frame = CGRectMake(178, 0, 40, 40);
-	shareButton.frame = CGRectMake(90, 0, 40, 40);
+	addFriendsButton.frame = CGRectMake(90, 0, 40, 40);
 	backButton.frame = CGRectMake(11, 0, 40, 40);
     
 	[UIView commitAnimations];
@@ -57,7 +58,7 @@
     [UIView setAnimationDelegate:self];
     //[UIView setAnimationDidStopSelector:@selector(animationFinished)];
 	
-	backButton.frame = CGRectMake(11, 0, 40, 40);
+	//backButton.frame = CGRectMake(11, 0, 40, 40);
 	
 	[UIView commitAnimations];
 	
@@ -72,6 +73,8 @@
     [UIView setAnimationDidStopSelector:@selector(animationProfileVersionFinished)];
 
 	backButton.frame = CGRectMake(-60, 0, 40, 40);
+	dotsButton.frame = CGRectMake(270, 0, 40, 40);
+	addFriendsButton.frame = CGRectMake(340, 0, 40, 40);
     
 	[UIView commitAnimations];
 	
@@ -86,8 +89,8 @@
     [UIView setAnimationDelegate:self];
   
 	
-	glanceButton.frame = CGRectMake(140, 0, 40, 40);
-	shareButton.frame = CGRectMake(11, 0, 40, 40);
+	//glanceButton.frame = CGRectMake(140, 0, 40, 40);
+	//addFriendsButton.frame = CGRectMake(11, 0, 40, 40);
     
 	[UIView commitAnimations];
 	
@@ -100,8 +103,8 @@
     [UIView setAnimationDelegate:self];
     //[UIView setAnimationDidStopSelector:@selector(animationProfileVersionFinished)];
 	
-	dotsButton.frame = CGRectMake(270, 0, 40, 40);
-    shareButton.frame = CGRectMake(-60, 0, 40, 40);
+	dotsButton.frame = CGRectMake(340, 0, 40, 40);
+    addFriendsButton.frame = CGRectMake(270, 0, 40, 40);
 	backButton.frame = CGRectMake(11, 0, 40, 40);
 	[UIView commitAnimations];
 	
@@ -128,10 +131,10 @@
 -(IBAction) backButtonClick:	(id) sender {
 	if (GLANCE == status) {
 		[glancePage.view removeFromSuperview];
-		status = ADDFRIENDS;
+		[self profileVersion];
 	} else if (ADDFRIENDS == status) {
 		[addFriends.view removeFromSuperview];
-		status = GLANCE;
+		[self glanceVersion];
 	}
 }
 
@@ -148,12 +151,11 @@
 	[self glanceVersion];
 
 }
--(IBAction) shareButtonClick:	(id) sender {
+
+- (IBAction) addFriendsButtonClick:	(id) sender {
+	/*
 	self.view.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
-
-}
-
--(IBAction) dotsButtonClick:	(id) sender {
+	 */
 	if (nil == addFriends) {
 		addFriends = [[AddFriends alloc] initWithNibName:@"AddFriends" bundle:[NSBundle mainBundle]];
 	}
@@ -163,7 +165,32 @@
 	 .view];
 	
 	[self addFriendsVersion];
+}
 
+- (IBAction) dotsButtonClick:	(id) sender {
+	static BOOL loginButtonOn = NO;
+	/*
+	if (nil == settings) {
+		settings = [[Settings alloc] initWithNibName:@"Settings" bundle:[NSBundle mainBundle]];
+	}
+	CGRect frame = settings.view.frame;
+	settings.view.frame = CGRectMake(frame.origin.x, 40, frame.size.width, frame.size.height);
+	[userContent.view addSubview:settings.view];
+	
+	//[self addFriendsVersion];
+*/
+	[UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration: 1];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    [UIView setAnimationDelegate:self];
+	if (loginButtonOn) {
+		userContent.loginview.frame = CGRectOffset(userContent.loginview.frame, +284, 0);
+		loginButtonOn = NO;
+	} else {
+		loginButtonOn = YES;
+		userContent.loginview.frame = CGRectOffset(userContent.loginview.frame, -284, 0);
+	}
+	[UIView commitAnimations];
 }
 - (UIView*) getLoadingPage {
 	if (nil == addFriends) {

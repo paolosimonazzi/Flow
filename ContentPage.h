@@ -31,8 +31,14 @@
 @property (nonatomic, retain) IBOutlet AsynchUIImageView *image2;
 
 @property (nonatomic, retain) IBOutlet UILabel *street1;
+@property (nonatomic, retain) IBOutlet UILabel *subtitle1_1;
+@property (nonatomic, retain) IBOutlet UILabel *subtitle1_2;
+
 
 @property (nonatomic, retain) IBOutlet UILabel *street2;
+@property (nonatomic, retain) IBOutlet UILabel *subtitle2_1;
+@property (nonatomic, retain) IBOutlet UILabel *subtitle2_2;
+
 
 @end
 

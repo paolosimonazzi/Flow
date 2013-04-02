@@ -11,7 +11,7 @@
 
 #import "Connection.h"
 
-@class AmazingMenu, GlancePage;
+@class AmazingMenu, GlancePage, AsynchUIImageView;
 
 
 @class GPS;
@@ -23,21 +23,30 @@
 	NSMutableArray	*usersArray;
 	
 }
-- (IBAction)postPhotoClick:(UIButton *)sender;
-- (IBAction)changeUser:(UIButton *)sender;
+- (IBAction)postPhotoClick:	(UIButton *)sender;
+- (IBAction)refresh:		(UIButton *)sender;
 
 @property (strong, nonatomic) IBOutlet FBProfilePictureView *profilePic;
-@property (strong, nonatomic) IBOutlet UILabel *labelFirstName;
-@property (strong, nonatomic) id<FBGraphUser> loggedInUser;
+@property (strong, nonatomic) IBOutlet UILabel				*labelFirstName;
+@property (strong, nonatomic) id<FBGraphUser>				loggedInUser;
 @property (nonatomic, retain) GPS *gpsManager;
 
-@property (nonatomic, retain) IBOutlet UILabel		*userName;
+@property (nonatomic, retain) IBOutlet UILabel				*userName;
 
-@property (nonatomic, retain) IBOutlet UIScrollView *scrollView;
+@property (nonatomic, retain) IBOutlet AsynchUIImageView	*graphImage;
 
-@property (nonatomic, retain) IBOutlet UIView		*profileView;
+@property (nonatomic, retain) FBLoginView					*loginview;
+
+@property (nonatomic, retain) IBOutlet UIScrollView			*scrollView;
+
+@property (nonatomic, retain) IBOutlet UIView				*profileView;
+
+@property (nonatomic, retain) IBOutlet UIView				*splashView;
+
 
 @property (nonatomic, retain) GlancePage *glance;
 
-@property (nonatomic, retain) IBOutlet UIPickerView *usersPicker;
+@property (nonatomic, retain) IBOutlet UIPickerView			*usersPicker;
+
+@property (nonatomic, assign) BOOL loading;
 @end

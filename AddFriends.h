@@ -25,6 +25,8 @@
 
 @property (nonatomic, retain)			NSMutableArray *friends;
 
+@property (nonatomic, retain) IBOutlet	UILabel *labelForFriends;
+
 - (IBAction) inviteFriendsClick:	(id) sender;
 
 - (void)	 friendRequest:		(int) num;

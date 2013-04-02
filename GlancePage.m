@@ -121,14 +121,18 @@
 	myCell.GlancePageRef = self;
 	
 	NSDictionary *user = [usersArray objectAtIndex:indexPath.row];
+	NSNumber *userId = [user objectForKey:@"id"];
+	
 	NSDictionary *userProfile = [user objectForKey:@"profile"];
 	
 	cell.backgroundView.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 	cell.selectedBackgroundView.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 
 	[myCell.profilePic loadImageAsync:[userProfile objectForKey:@"imageUrl"]];
-	[myCell.graphPic loadImageAsync:[user objectForKey:@"wavelinePreviewUrl"]];
-	
+	NSString *urlForGraph = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/event/user-%lu/waveline?width=464&height=80", [userId longValue]];
+	NSLog(@"string for graph: %@", urlForGraph);
+ 	//[myCell.graphPic loadImageAsync:[user objectForKey:@"wavelinePreviewUrl"]];
+	[myCell.graphPic loadImageAsync:urlForGraph];
 	myCell.name.text = [userProfile objectForKey:@"firstName"];
 	
 	NSString *fStatus = [user objectForKey:@"friendshipStatus"];
@@ -136,9 +140,7 @@
 	if ([fStatus isEqualToString:@"REQUEST_RECEIVED"]) {
 		[myCell acceptanceVersion];
 	}
-
 	return cell;
-	
 }
 
 #pragma mark -

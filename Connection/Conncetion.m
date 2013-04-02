@@ -129,10 +129,10 @@
 	
 	NSString *stop_str = [NSString stringWithFormat:@"%d000", (int)[stop timeIntervalSince1970]];
 	
-	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/event/user-%lu/%@to%@",[User getUser].ID, start_str, stop_str];
+	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/event/user-%lu/eventFeedPage?wl_width=800&wl_height=200",[User getUser].ID];
 	
 	NSLog(@"events request: %@", urlRequest_str);
-	
+	//http://glance-server.herokuapp.com/services/event/user-1/eventFeedPage?wl_width=800&wl_height=200
 	//@"http://glance-server.herokuapp.com/services/event/user-65536/1361880000000to1361880087160"]
 	
 	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlRequest_str]

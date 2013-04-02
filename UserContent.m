@@ -18,41 +18,71 @@
 @implementation UserContent
 
 @synthesize labelFirstName, loggedInUser, profilePic,
-gpsManager, userName, scrollView, profileView, glance, usersPicker;
+gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, graphImage, loading, splashView;
 
+
+- (void) createCustomFBLogin {
+	splashView.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
+
+	[self.view addSubview:splashView];
+	
+	//loginview = [[FBLoginView alloc] initWithPermissions:[NSArray arrayWithObject:@"publish_actions"]];
+	loginview = [[FBLoginView alloc] init];
+	
+	loginview.frame = CGRectOffset(loginview.frame, 150, 50);
+	loginview.alpha = 0;
+	//loginview.frame = CGRectMake(200, 50, 300, 40);
+	for (id obj in loginview.subviews)
+	{
+		if ([obj isKindOfClass:[UIButton class]])
+		{
+			UIButton * loginButton =  obj;
+			UIImage *loginImage = [UIImage imageNamed:@"accept_invitation_button_unpressed"];
+			[loginButton setBackgroundImage:loginImage forState:UIControlStateNormal];
+			[loginButton setBackgroundImage:nil forState:UIControlStateSelected];
+			[loginButton setBackgroundImage:nil forState:UIControlStateHighlighted];
+			[loginButton sizeToFit];
+		}
+		if ([obj isKindOfClass:[UILabel class]])
+		{ 
+			UILabel * loginLabel =  obj;
+			loginLabel.text = @"";
+			loginLabel.textAlignment = UITextAlignmentCenter;
+			loginLabel.frame = CGRectMake(0, 0, 271, 37);
+		   
+		}
+	}
+    loginview.delegate = self;
+    [loginview sizeToFit];
+	[splashView addSubview:loginview];
+	//[profileView addSubview:loginview];
+	[UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration: 0.5];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    [UIView setAnimationDelegate:self];
+
+    
+	[UIView commitAnimations];
+	
+
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	usersArray = [[NSMutableArray alloc] init];
-	[usersArray addObject:@"Paolo0"];
-	[usersArray addObject:@"Paolo1"];
-	[usersArray addObject:@"Paolo2"];
-	[usersArray addObject:@"Paolo3"];
-	[usersArray addObject:@"Paolo4"];
-	[usersArray addObject:@"Paolo5"];
-	[usersArray addObject:@"Paolo6"];
-	[usersArray addObject:@"Paolo7"];
-	[usersArray addObject:@"Paolo8"];
-	[usersArray addObject:@"Paolo9"];
 
 	self.view.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 	// Do any additional setup after loading the view, typically from a nib.
 	// Create Login View so that the app will be granted "status_update" permission.
-	
-	FBLoginView *loginview = [[FBLoginView alloc] init];
+	[self createCustomFBLogin];
+
     
-    loginview.frame = CGRectOffset(loginview.frame, 86, 360);
-    loginview.delegate = self;
-    
-	scrollView.contentSize = CGSizeMake(3200, 450);
+	scrollView.contentSize = CGSizeMake(3200, 385);
 	scrollView.delegate = self;
 	scrollView.showsVerticalScrollIndicator    = NO;
     scrollView.showsHorizontalScrollIndicator  = NO;
 	
-    [loginview sizeToFit];
 	
-	gpsManager = [[GPS alloc] init];
-	[profileView addSubview:loginview];
+	//gpsManager = [[GPS alloc] init];
 	profileView.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 	
 	[self addEvent:profileView atPage:0];
@@ -60,7 +90,6 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker;
 	[self scrollAtPage:9];
 
 	contentPages = [[NSMutableArray alloc] initWithObjects:profileView, nil];
-
 	
 	[self menuCreation];
 	
@@ -102,6 +131,10 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker;
     [scrollView scrollRectToVisible:scrollRect animated:YES];
 
 }
+- (void) scrollAtRefreshing {
+	CGRect scrollRect = CGRectMake(2050, 50, 320, 302);
+    [scrollView scrollRectToVisible:scrollRect animated:YES];
+}
 - (void) addEvent:(UIView*) event atPage:(int)page {
 
 	[contentPages addObject:event];
@@ -109,14 +142,13 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker;
 	int xPos = (3200-pageWide) - page*pageWide;
 	
 	event.frame = CGRectMake(event.frame.origin.x + xPos, event.frame.origin.y, event.frame.size.width, event.frame.size.height);
-	
 	[scrollView addSubview:event];
-
+	
 }
 
 - (void)getEvents {
-	
-	Connection *someDataConnection = [[Connection alloc] initWithTarget:self withSelector:@selector(contentsBack:)];
+	loading = YES;
+	Connection *someDataConnection = [[Connection alloc] initWithTarget:self withSelector:@selector(eventsBack:)];
 
 	NSString *dateStartStr = @"20130307";
 	// Convert string to date object
@@ -133,65 +165,38 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker;
 	[someDataConnection getEvents:dateStart stop:today];
 }
 
-#pragma mark - picker's shit
-
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)thePickerView {
-	
-	return 1;
-}
-
-- (NSInteger)pickerView:(UIPickerView *)thePickerView numberOfRowsInComponent:(NSInteger)component {
-	
-	return [usersArray count];
-}
-
-- (NSString *)pickerView:(UIPickerView *)thePickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-	return [usersArray objectAtIndex:row];
-}
-- (void)pickerView:(UIPickerView *)thePickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-	
-	[User getUser].ID = row + 10;
-	NSLog(@"Selected user: %d", [User getUser].ID);
-
-}
-
-#pragma -
 
 #pragma mark - connection
+#define FIRSTCONTENT 0
+#define SECONDCONTENT 1
 
-- (void) contentsBack:(NSData*)_data {
+- (void) eventsBack:(NSData*)_data {
 
 	NSError* error;
 
-	NSArray *array = [NSJSONSerialization JSONObjectWithData:_data //1
+	NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:_data //1
 													 options:kNilOptions
 													   error:&error];
-	for (int idx = 0; idx<[array count]; ++idx) {
-		ContentPage *son = [[ContentPage alloc]
-							initWithNibName:@"ContentPage" bundle:[NSBundle mainBundle]];
-		[self addEvent:son.view atPage:idx+1];
-		//[son loadImage:0 withUrl:nil];
-		//[son loadContent: [array objectAtIndex:idx]];
-		//[son loadContent:idx withUrl:[array objectAtIndex:idx]];
-		[son loadContent:0 withData:[array objectAtIndex:idx]];
+	NSArray *array = [dict objectForKey:@"eventViews"];
+	NSLog(@"num of events: %d", [array count]);
+	
+	for (int idx = 0; idx</*[array count]*/16; idx+=2) {
+		
+		ContentPage *son = [[ContentPage alloc]	initWithNibName:@"ContentPage" bundle:[NSBundle mainBundle]];
+		
+		[self addEvent:son.view atPage:idx/2+1];
+
+		[son loadContent:FIRSTCONTENT withData:[array objectAtIndex:idx]];
 		if (idx < [array count]-1) {
-			[son loadContent:1 withData:[array objectAtIndex:idx+1]];
-			//[son loadImage:idx withUrl:[array objectAtIndex:idx+1]];
-			//[son loadContent: [array objectAtIndex:idx+1]];
+			[son loadContent:SECONDCONTENT withData:[array objectAtIndex:idx+1]];
 		}
-		if (idx>9)
+		if (idx>16)
 			break;
 	}
+	[graphImage loadImageAsync:[dict objectForKey:@"wavelineImageUrl"]];
+	loading = NO;
+	scrollView.contentOffset = CGPointMake(2880, 0);
 }
-/*
-- (void) dataReceived:(NSData*)data {
-    // do something with the data
-    // receivedData is declared as a method instance elsewhere
-    NSLog(@"Succeeded! Received bytes of data (content)");
-	
-}
-*/
-
 
 #pragma mark -
 
@@ -284,21 +289,47 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker;
 	
 }
 
-- (IBAction)changeUser:(UIButton *)sender {
-	usersPicker.alpha = usersPicker.alpha>0?0:1;
+- (IBAction)refresh:(UIButton *)sender {
+//	[self scrollAtRefreshing];
+	scrollView.contentOffset = CGPointMake(2910, 0);
+
 }
 
 #pragma mark - Scrolling Stuff
 
-- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView {
-	
-	if (PROFILE == menu.status) {
-		[menu contentsFeedVersion];
-	} else {
-		[menu profileVersion];
-	}
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)_scrollView {
 
 }
+
+- (void) onTick:(NSTimer *)timer {
+	loading = NO;
+	scrollView.contentOffset = CGPointMake(2880, 0);
+
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+
+	//NSLog(@"%f", scrollView.contentOffset.x);
+	if ( scrollView.contentOffset.x > 2930 ) { //2910
+	
+		if (!loading) {
+			[self getEvents];
+		}
+	}
+	if (loading) {
+		scrollView.contentOffset = CGPointMake(2930, 0);
+	}
+}
+
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
+	
+	NSLog(@"finish");
+
+}
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+}
+
+
 #pragma mark -
 
 @end

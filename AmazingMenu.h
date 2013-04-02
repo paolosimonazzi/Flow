@@ -15,7 +15,7 @@ enum MenuStatus {
 	ADDFRIENDS
 };
 
-@class GlancePage, UserContent, AddFriends;
+@class GlancePage, UserContent, AddFriends, Settings;
 
 @interface AmazingMenu : UIViewController {
 	
@@ -26,14 +26,14 @@ enum MenuStatus {
 
 @property (nonatomic, retain) IBOutlet UIButton *backButton;
 @property (nonatomic, retain) IBOutlet UIButton *glanceButton;
-@property (nonatomic, retain) IBOutlet UIButton *shareButton;
+@property (nonatomic, retain) IBOutlet UIButton *addFriendsButton;
 @property (nonatomic, retain) IBOutlet UIButton *dotsButton;
 
 @property (nonatomic, assign) int status;
 
-@property (nonatomic, retain) UserContent *userContent;
-
-@property (nonatomic, retain) AddFriends  *addFriends;
+@property (nonatomic, retain) UserContent	*userContent;
+@property (nonatomic, retain) AddFriends	*addFriends;
+@property (nonatomic, retain) Settings		*settings;
 
 
 - (void) contentsFeedVersion;
@@ -41,7 +41,7 @@ enum MenuStatus {
 
 -(IBAction) backButtonClick:	(id) sender;
 -(IBAction) glanceButtonClick:	(id) sender;
--(IBAction) shareButtonClick:	(id) sender;
+-(IBAction) addFriendsButtonClick:	(id) sender;
 -(IBAction) dotsButtonClick:	(id) sender;
 
 - (UIView*) getLoadingPage;
