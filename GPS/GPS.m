@@ -36,7 +36,7 @@
 	
 	NSString *gpsStr = [NSString stringWithFormat:@"(%@) %@ Location %.06f %.06f %@", ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) ? @"bg" : @"fg",  @"gps:", newLocation.coordinate.latitude, newLocation.coordinate.longitude, [formatter stringFromDate:newLocation.timestamp]];
 	
-	NSLog(@"log: %@", gpsStr);
+	//NSLog(@"log: %@", gpsStr);
 	
 	// ** structure creation **
 	NSString *lat = [NSString stringWithFormat:@"%0.06f", newLocation.coordinate.latitude];
@@ -52,16 +52,16 @@
 								 time, @"time",
 								 nil];
 
-	Connection *conn = [[Connection alloc] initWithTarget:self withSelector:@selector(callResponse:)];
+	//Connection *conn = [[Connection alloc] initWithTarget:self withSelector:@selector(callResponse:)];
 	
-	[conn tracePosition:gpsInfo];
+	//[conn tracePosition:gpsInfo];
 	
 }
 
 #pragma mark - connection
 
 - (void) callResponse:(NSData*)_data {
-	NSLog(@"Succeeded! Received bytes of data (gps)");
+	//NSLog(@"Succeeded! Received bytes of data (gps)");
 	
 }
 

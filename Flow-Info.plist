@@ -35,6 +35,14 @@
 	<string>464965430237574</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Brandon_blk_it.otf</string>
+		<string>Brandon_light.otf</string>
+		<string>Brandon_med_it.otf</string>
+		<string>Brandon_bld.otf</string>
+		<string>Brandon_blk.otf</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>

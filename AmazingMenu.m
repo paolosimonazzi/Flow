@@ -179,6 +179,7 @@
 	
 	//[self addFriendsVersion];
 */
+/*
 	[UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration: 1];
     [UIView setAnimationBeginsFromCurrentState:YES];
@@ -191,14 +192,16 @@
 		userContent.loginview.frame = CGRectOffset(userContent.loginview.frame, -284, 0);
 	}
 	[UIView commitAnimations];
+ */
 }
 - (UIView*) getLoadingPage {
 	if (nil == addFriends) {
 		addFriends = [[AddFriends alloc] initWithNibName:@"AddFriends" bundle:[NSBundle mainBundle]];
 	}
 	CGRect frame = addFriends.view.frame;
+	CGRect Loadframe = addFriends.loadingPage.frame;
 	addFriends.view.frame = CGRectMake(frame.origin.x, 40, frame.size.width, frame.size.height);
-
+	addFriends.loadingPage.frame = CGRectMake(Loadframe.origin.x, 3, Loadframe.size.width, Loadframe.size.height);
 	return addFriends.loadingPage;
 }
 @end

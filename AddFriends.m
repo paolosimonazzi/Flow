@@ -78,7 +78,7 @@
     [super viewDidLoad];
 	NSURL *url = [[NSBundle mainBundle] URLForResource:@"glance-animation" withExtension:@"gif"];
     
-	self.gif.image = [UIImage animatedImageWithAnimatedGIFURL:url];
+	//self.gif.image = [UIImage animatedImageWithAnimatedGIFURL:url];
 	loadingPage.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
     // Do any additional setup after loading the view from its nib.
 	friends = [[NSMutableArray alloc] initWithCapacity:0];

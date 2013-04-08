@@ -81,14 +81,45 @@
 @implementation AsynchUIImageView
 
 @synthesize activityIndicator;
-- (void) contentsBack:(NSData*)_data {
+
+/*
+- (id) init {
+	self = [super init];
+	self.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:0.0];
+
+	return self;
+}
+*/
+- (void) fadeIn {
 	
+	[UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration: 2];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    [UIView setAnimationDelegate:self];
+
+	self.alpha = 1;
+	
+	[UIView commitAnimations];
+}
+
+- (void) contentsBack:(NSData*)_data {
+
+	self.alpha = 0;
+	[activityIndicator removeFromSuperview];
 	[self setImage:[UIImage imageWithData:_data]];
 	
-	[activityIndicator removeFromSuperview];
+	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:0.1
+									 target:self
+								   selector:@selector(fadeIn)
+								   userInfo:nil
+									repeats:NO];
 }
 
 - (void) loadImageAsync:(NSString*)_url {
+	self.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:0.0];
+
+	self.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
+
 	
 	Connection *connectionForTheImage = [[Connection alloc] initWithTarget:self withSelector:@selector(contentsBack:)];
 	[connectionForTheImage loadImage:_url];

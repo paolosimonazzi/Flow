@@ -28,6 +28,10 @@
 
 @property (strong, nonatomic) IBOutlet FBProfilePictureView *profilePic;
 @property (strong, nonatomic) IBOutlet UILabel				*labelFirstName;
+
+@property (strong, nonatomic) IBOutlet UILabel				*labelPlace;
+@property (strong, nonatomic) IBOutlet UILabel				*labelTime;
+
 @property (strong, nonatomic) id<FBGraphUser>				loggedInUser;
 @property (nonatomic, retain) GPS *gpsManager;
 
@@ -42,6 +46,7 @@
 @property (nonatomic, retain) IBOutlet UIView				*profileView;
 
 @property (nonatomic, retain) IBOutlet UIView				*splashView;
+@property (nonatomic, retain) IBOutlet UIView				*fakeButton;
 
 
 @property (nonatomic, retain) GlancePage *glance;

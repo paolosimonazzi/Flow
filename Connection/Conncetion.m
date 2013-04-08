@@ -37,7 +37,7 @@
     [receivedData setLength:0];
 	NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
 	int code = [httpResponse statusCode];
-	NSLog(@"status: %d", code);
+	//NSLog(@"status: %d", code);
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
@@ -51,7 +51,7 @@
 // data back
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 
-    NSLog(@"Succeeded! Received %d bytes of data",[receivedData length]);
+    //NSLog(@"Succeeded! Received %d bytes of data",[receivedData length]);
 
 	if ([receivedData length]>0) {
 
@@ -95,7 +95,7 @@
 	//[data setObject:@"65536" forKey:@"userId"];
 	[data setObject:[NSString stringWithFormat:@"%d", user.ID] forKey:@"userId"];
 
-	NSLog(@"dictionary: %@", [data description]);
+	//NSLog(@"dictionary: %@", [data description]);
 
 	NSData* jsonData = [NSJSONSerialization dataWithJSONObject:data
                                                        options:NSJSONWritingPrettyPrinted
@@ -103,7 +103,7 @@
 
 	NSString *strJson = [NSString stringWithUTF8String:[jsonData bytes]];
 
-	NSLog (@"json str:%@", strJson);
+	//NSLog (@"json str:%@", strJson);
 
 	
 	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://glance-server.herokuapp.com/services/trace"]
@@ -129,7 +129,7 @@
 	
 	NSString *stop_str = [NSString stringWithFormat:@"%d000", (int)[stop timeIntervalSince1970]];
 	
-	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/event/user-%lu/eventFeedPage?wl_width=800&wl_height=200",[User getUser].ID];
+	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/event/user-%lu/eventFeedPage-%@to%@?wl_width=800&wl_height=200", [User getUser].ID, start_str, stop_str];
 	
 	NSLog(@"events request: %@", urlRequest_str);
 	//http://glance-server.herokuapp.com/services/event/user-1/eventFeedPage?wl_width=800&wl_height=200
@@ -148,12 +148,10 @@
 
 - (void) loadUsersNetwork {
 	
-
 	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/user/%d/addFriendsPage", [User getUser].ID ];
 	
 	NSLog(@"users request: %@", urlRequest_str);
 	
-
 	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlRequest_str]
 															  cachePolicy:NSURLRequestUseProtocolCachePolicy
 														  timeoutInterval:60.0];
@@ -163,7 +161,6 @@
 		receivedData = [NSMutableData data];
 	} else {
 	}
-
 }
 
 - (void) loadImage:(NSString*)_str {
