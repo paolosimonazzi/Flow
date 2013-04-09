@@ -66,8 +66,6 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, g
 	fakeButton.alpha = 1;
 
 	[UIView commitAnimations];
-	
-
 }
 /*
 - (BOOL)canBecomeFirstResponder {
@@ -156,6 +154,14 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, g
 	CGRect scrollRect = CGRectMake(2050, 50, 320, 302);
     [scrollView scrollRectToVisible:scrollRect animated:YES];
 }
+- (void) flushEvents {
+	NSLog(@"flush events");
+	for (int idx=1; idx<[contentPages count]; idx++) {
+		UIView *pageToFlush = [contentPages objectAtIndex:idx];
+		[pageToFlush removeFromSuperview];
+	}
+	[contentPages removeAllObjects];
+}
 - (void) addEvent:(UIView*) event atPage:(int)page {
 
 	[contentPages addObject:event];
@@ -164,10 +170,12 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, g
 	
 	event.frame = CGRectMake(event.frame.origin.x + xPos, event.frame.origin.y, event.frame.size.width, event.frame.size.height);
 	[scrollView addSubview:event];
-	
 }
 
 - (void)getEvents {
+	
+	[self flushEvents];
+	
 	loading = YES;
 	Connection *someDataConnection = [[Connection alloc] initWithTarget:self withSelector:@selector(eventsBack:)];
 
@@ -175,21 +183,20 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, g
 	// Convert string to date object
 	NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
 	[dateFormat setDateFormat:@"yyyyMMdd"];
-
 	
 	//NSDate *dateStop = [dateFormat dateFromString:dateStopStr];
 	
 	NSDate *today = [NSDate dateWithTimeIntervalSinceNow:0];
-	NSDate *h24Early = [NSDate dateWithTimeIntervalSinceNow:86400]; //-86400
+	NSDate *h24Early = [NSDate dateWithTimeIntervalSinceNow:-86400]; //-86400
 	//NSLog(@"time start: %d time stop %d", (int)[dateStart timeIntervalSince1970], (int)[dateStop timeIntervalSince1970]);
 
 	[someDataConnection getEvents:h24Early stop:today];
 }
 
-
 #pragma mark - connection
 #define FIRSTCONTENT 0
 #define SECONDCONTENT 1
+
 - (void) eventsBack:(NSData*)_data {
 
 	NSError* error;
@@ -199,9 +206,9 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, g
 													   error:&error];
 	NSArray *array = [dict objectForKey:@"eventViews"];
 	if ([array count]) {
-	NSDictionary *lastplace = [array objectAtIndex:0];
-	labelPlace.text = [lastplace objectForKey:@"title"];
-	labelTime.text = [lastplace objectForKey:@"subtitle2"];
+		NSDictionary *lastplace = [array objectAtIndex:0];
+		labelPlace.text = [lastplace objectForKey:@"title"];
+		labelTime.text = [lastplace objectForKey:@"subtitle2"];
 	}
 	NSLog(@"num of events: %d", [array count]);
 	int numArray = [array count];

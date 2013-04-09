@@ -86,6 +86,13 @@ NSMutableDictionary *lastGpsInfo;
 }
 
 + (NSMutableDictionary*) getLastGpsPosition {
+	if (nil==lastGpsInfo) {
+		NSDictionary *position = [NSDictionary dictionaryWithObjectsAndKeys:@"-", @"lat", @"-", @"lng", nil];
+		lastGpsInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys: position, @"position",
+											 @"0", @"speed",
+											 @"0", @"time",
+											 nil];
+	}
 	return lastGpsInfo;
 }
 

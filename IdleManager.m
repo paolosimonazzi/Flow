@@ -25,7 +25,6 @@
 		orientation = [UIDevice currentDevice].orientation;
 		NSLog(@"hai spostato il telefono, merda!");
 	}
-
 	if ([UIApplication sharedApplication].statusBarOrientation != orientation2) {
 		orientation2 = [UIApplication sharedApplication].statusBarOrientation;
 		NSLog(@"hai spostato il telefono, merda2!");
@@ -34,7 +33,28 @@
 	int ff=0;
 	 
 }
-- (void)handleDeviceMotion:(CMDeviceMotion*)motion{
+- (void) wakeUpResponse:(NSData*)data {
+	NSString *str_resp = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+	
+	NSLog(@"idleManager Connection (wakeUp): %@", str_resp);
+}
+- (void) sleepResponse:(NSData*)data {
+	
+	NSString *str_resp = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+	
+	NSLog(@"idleManager Connection: %@", str_resp);
+	
+	if ([str_resp rangeOfString:@"ERROR"].location != NSNotFound) {
+		NSLog(@"idle connection ERROR");
+	} else {
+		Connection *conn = [[Connection alloc] initWithTarget:self withSelector:@selector(wakeUpResponse:)];
+		conn.retry = 5;
+		NSDate *now = [NSDate dateWithTimeIntervalSinceNow:0];
+		[conn sleepEvent:NO withTime:[now timeIntervalSince1970]];
+	}
+}
+
+- (void)handleDeviceMotion:(CMDeviceMotion*)motion {
     CMAttitude *attitude = motion.attitude;
 	
     float accelerationThreshold = 0.1; // or whatever is appropriate - play around with different values
@@ -58,7 +78,6 @@
 			movement = YES;
         }
     }
-	
 	if (movement) {
 		
 		NSTimeInterval timeElapsed =  [idleTime timeIntervalSinceNow]*-1;
@@ -67,16 +86,14 @@
 		
 		movement = NO;
 		
-		if (timeElapsed>5) {
-			
-			Connection *conn = [[Connection alloc] initWithTarget:self withSelector:@selector(callResponse:)];
-			
+		if (timeElapsed > 21600) {
+			Connection *conn = [[Connection alloc] initWithTarget:self withSelector:@selector(sleepResponse:)];
+			conn.retry = 5;
 			[conn sleepEvent:YES withTime:timeElapsed];
 			
+			NSLog(@"sleep event!");
 		}
-		
 		idleTime = [NSDate dateWithTimeIntervalSinceNow:0];
-		
 	}
 }
 - (void)startMotionManager {

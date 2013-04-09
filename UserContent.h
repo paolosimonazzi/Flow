@@ -20,8 +20,6 @@
 
 	NSMutableArray	*contentPages;
 	AmazingMenu		*menu;
-	NSMutableArray	*usersArray;
-	
 }
 - (IBAction)postPhotoClick:	(UIButton *)sender;
 - (IBAction)refresh:		(UIButton *)sender;

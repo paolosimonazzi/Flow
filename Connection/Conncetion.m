@@ -12,25 +12,37 @@
 
 @implementation Connection
 
-@synthesize myDelegate;
+@synthesize myDelegate, retry;
 
 - (id) initWithTarget:(id)_target withSelector:(SEL) _sel {
 	
 	self = [super init];
 	
 	self->target = _target;
-	self->callBack = _sel;
-	
+	self->dataBack = _sel;
+	self->statusBack = nil;
+	retry = 0;
 	return self;
 }
 
-#pragma mark - Connection response
+-(void) setCallBackForStatus:(SEL)_sel {
+	self->statusBack = _sel;
+}
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
-{
-    // This method is called when the server has determined that it
-    // has enough information to create the NSURLResponse.
-	
+- (void) retryCall:(NSTimer*) _timer {
+
+	NSURLConnection *theConnection  = [[NSURLConnection alloc] initWithRequest:theLastRequest delegate:self];
+	if (theConnection) {
+		receivedData = [NSMutableData data];
+	}
+	NSLog(@"connection failed->retry:%d", retry);
+	NSLog(@"dictionary sleep (retry): %@", [theLastRequest description]);
+	retry--;
+}
+
+#pragma mark - Connection response
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+
     // It can be called multiple times, for example in the case of a
     // redirect, so each time we reset the data.
 	
@@ -38,7 +50,18 @@
     [receivedData setLength:0];
 	NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
 	int code = [httpResponse statusCode];
-	//NSLog(@"status: %d", code);
+	
+	NSLog(@"http response:%d", code);
+	
+	if ( (code != 201 ) && (code != 200) ) {
+		if (retry) {
+			[NSTimer scheduledTimerWithTimeInterval:60
+											 target:self
+										   selector:@selector(retryCall:)
+										   userInfo:nil
+											repeats:NO];
+		}
+	}
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
@@ -56,7 +79,7 @@
 
 	if ([receivedData length]>0) {
 
-		[self->target performSelector:self->callBack withObject:receivedData];
+		[self->target performSelector:self->dataBack withObject:receivedData];
 	}
 }
 
@@ -71,6 +94,7 @@
 - (NSData*) getData {
 	return self->receivedData;
 }
+
 - (void) loging:(NSString*)_facebookId withToken:(NSString*)_token {
 
 	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/user/facebookLogin?fbId=%@&token=%@", _facebookId, _token];
@@ -101,11 +125,21 @@
 	
 	[data setObject:[NSNumber numberWithBool:_begin] forKey:@"begin"];
 	
+	[data removeObjectForKey:@"position"];
 	[data removeObjectForKey:@"time"];
-	unsigned long timeMs = _time*1000;
-	NSString *time = [NSString stringWithFormat:@"%lu", timeMs];
+	NSString *timeToSet;
+	unsigned long timeMs;
+	if (_begin) {
+		NSDate *timeIWentToSleep = [NSDate dateWithTimeIntervalSinceNow:-_time]; //-86400
+		timeMs = [timeIWentToSleep timeIntervalSince1970];
+		
+	} else {
+		timeMs = [[NSDate dateWithTimeIntervalSinceNow:0] timeIntervalSince1970];
+	}
+	
+	timeToSet = [NSString stringWithFormat:@"%lu000", timeMs];
+	[data setObject:timeToSet forKey:@"time"];
 
-	[data setObject:time forKey:@"time"];
 	
 	NSLog(@"dictionary sleep: %@", [data description]);
 	
@@ -115,10 +149,9 @@
 	
 	NSString *strJson = [NSString stringWithUTF8String:[jsonData bytes]];
 	
-	NSLog (@"json str(trace):%@", strJson);
+	NSLog (@"json str(sleep):%@", strJson);
 	
-	return;
-	
+
 	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://glance-server.herokuapp.com/services/trace"]
 															  cachePolicy:NSURLRequestUseProtocolCachePolicy
 														  timeoutInterval:60.0];
@@ -128,9 +161,18 @@
 	[theRequest setValue:[NSString stringWithFormat:@"%d", [jsonData length]] forHTTPHeaderField:@"Content-Length"];
 	[theRequest setHTTPBody: jsonData];
 	
-	NSURLConnection *theConnection=[[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
+	theLastRequest = theRequest;
+	
+	NSURLConnection *theConnection  = [[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
 	if (theConnection) {
-		
+		receivedData = [NSMutableData data];
+	} else {
+	}
+}
+
+- (void) retryBitch {
+	NSURLConnection *theConnection  = [[NSURLConnection alloc] initWithRequest:theLastRequest delegate:self];
+	if (theConnection) {
 		receivedData = [NSMutableData data];
 	} else {
 	}
