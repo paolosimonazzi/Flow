@@ -25,15 +25,6 @@
     return [FBSession.activeSession handleOpenURL:url];
 }
 
--(void) deviceOrientationChanged:(NSNotification*)notification {
-	
-	NSNotification *not = notification;
-	NSLog(@"orientation changed");
-	NSNotificationQueue *ntos = [NSNotificationQueue defaultQueue];
-	int app=0;
-	//NSRunLoop
-	//[[NSRunLoop currentRunLoop] runUntilDate:[NSDate date]];
-}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {

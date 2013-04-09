@@ -10,7 +10,8 @@
 #import <CoreMotion/CoreMotion.h>
 
 @interface IdleManager : NSObject {
-
+	NSDate *idleTime;
+	BOOL	movement;
 }
 -(void) deviceOrientationChanged:(NSNotification*)notification;
 @property (nonatomic, retain) UIAccelerometer *accelerometer;

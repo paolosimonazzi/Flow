@@ -9,10 +9,15 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import "Connection.h"
+@class Stack;
 
 @interface GPS : NSObject <CLLocationManagerDelegate> {
 
 	CLLocationManager* gpsManager;
+	
 }
+@property (nonatomic, retain) Stack *connectionsStack;
+
++ (NSMutableDictionary*) getLastGpsPosition;
 
 @end

@@ -33,6 +33,9 @@
 - (void) friendshipAccept:	(unsigned long) userId;
 - (void) friendshipDecline:	(unsigned long) userId;
 
+- (void) sleepEvent:		(BOOL) _begin withTime:(NSTimeInterval) _time;
+
+
 
 - (void) loadGlance;
 

@@ -69,6 +69,20 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, g
 	
 
 }
+/*
+- (BOOL)canBecomeFirstResponder {
+    return YES;
+}
+- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event {
+    if ( event.subtype == UIEventSubtypeMotionShake ) {
+    	NSLog(@"Shake!");
+    }
+	
+    if ([super respondsToSelector:@selector(motionEnded:withEvent:)]) {
+        [super motionEnded:motion withEvent:event];
+    }
+}
+*/
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -85,7 +99,7 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, g
     scrollView.showsHorizontalScrollIndicator  = NO;
 	
 	
-	//gpsManager = [[GPS alloc] init];
+	gpsManager = [[GPS alloc] init];
 	profileView.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 	
 	[self addEvent:profileView atPage:0];
@@ -161,12 +175,12 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, g
 	// Convert string to date object
 	NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
 	[dateFormat setDateFormat:@"yyyyMMdd"];
-	NSDate *dateStart = [dateFormat dateFromString:dateStartStr];
 
+	
 	//NSDate *dateStop = [dateFormat dateFromString:dateStopStr];
 	
 	NSDate *today = [NSDate dateWithTimeIntervalSinceNow:0];
-	NSDate *h24Early = [NSDate dateWithTimeIntervalSinceNow:-6400]; //-86400
+	NSDate *h24Early = [NSDate dateWithTimeIntervalSinceNow:86400]; //-86400
 	//NSLog(@"time start: %d time stop %d", (int)[dateStart timeIntervalSince1970], (int)[dateStop timeIntervalSince1970]);
 
 	[someDataConnection getEvents:h24Early stop:today];

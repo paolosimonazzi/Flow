@@ -7,6 +7,7 @@
 //
 
 #import "IdleManager.h"
+#import "Connection.h"
 
 @implementation IdleManager
 @synthesize accelerometer, motionManager;
@@ -15,26 +16,8 @@
 	static UIDeviceOrientation orientation = UIDeviceOrientationUnknown;
 	static UIInterfaceOrientation orientation2 = UIDeviceOrientationPortrait;
 	NSRunLoop* myRunLoop = [NSRunLoop mainRunLoop];
-	NSLog(@"tick");
+	//NSLog(@"tick");
     NSInteger    loopCount = 10;
-	/*
-	do
-    {
-        // Run the run loop 10 times to let the timer fire.
-        [myRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-        loopCount--;
-    }
-    while (loopCount);
-	 */
-	/*
-	do {
-
-		[[NSRunLoop mainRunLoop] runUntilDate:[NSDate date]];
-
-	} while ([UIDevice currentDevice].orientation == orientation);
-	 */
-	
-	//[[NSRunLoop currentRunLoop] runUntilDate:[NSDate date]];
 	NSNotification *not;
 	NSNotificationQueue *queue = [NSNotificationQueue defaultQueue];
 	
@@ -63,29 +46,45 @@
     if ((rotationRate.x) > rotationRateThreshold) {
         if (fabs(userAcceleration.x) > accelerationThreshold || fabs(userAcceleration.y) > accelerationThreshold || fabs(userAcceleration.z) > accelerationThreshold) {
 			
-            NSLog(@"rotation rate = [Pitch: %f, Roll: %f, Yaw: %f]", attitude.pitch, attitude.roll, attitude.yaw);
-            NSLog(@"motion.rotationRate = %f", rotationRate.x);
+            //NSLog(@"rotation rate = [Pitch: %f, Roll: %f, Yaw: %f]", attitude.pitch, attitude.roll, attitude.yaw);
+            //NSLog(@"motion.rotationRate = %f", rotationRate.x);
+			movement = YES;
+        }
+    } else if ((-rotationRate.x) > rotationRateThreshold) {
+        if (fabs(userAcceleration.x) > accelerationThreshold || fabs(userAcceleration.y) > accelerationThreshold || fabs(userAcceleration.z) > accelerationThreshold) {
 			
-            //[self showMenuAnimated:YES];
+            //NSLog(@"rotation rate = [Pitch: %f, Roll: %f, Yaw: %f]", attitude.pitch, attitude.roll, attitude.yaw);
+            //NSLog(@"motion.rotationRate = %f", rotationRate.x);
+			movement = YES;
         }
     }
 	
-    else if ((-rotationRate.x) > rotationRateThreshold) {
-        if (fabs(userAcceleration.x) > accelerationThreshold || fabs(userAcceleration.y) > accelerationThreshold || fabs(userAcceleration.z) > accelerationThreshold) {
+	if (movement) {
+		
+		NSTimeInterval timeElapsed =  [idleTime timeIntervalSinceNow]*-1;
+
+		NSLog(@"idle time: %f", timeElapsed);
+		
+		movement = NO;
+		
+		if (timeElapsed>5) {
 			
-            NSLog(@"rotation rate = [Pitch: %f, Roll: %f, Yaw: %f]", attitude.pitch, attitude.roll, attitude.yaw);
-            NSLog(@"motion.rotationRate = %f", rotationRate.x);
+			Connection *conn = [[Connection alloc] initWithTarget:self withSelector:@selector(callResponse:)];
 			
-            //[self dismissMenuAnimated:YES];
-        }
-    }
+			[conn sleepEvent:YES withTime:timeElapsed];
+			
+		}
+		
+		idleTime = [NSDate dateWithTimeIntervalSinceNow:0];
+		
+	}
 }
-- (void)startMotionManager{
+- (void)startMotionManager {
 	if (motionManager == nil) {
 		motionManager = [[CMMotionManager alloc] init];
 	}
 	
-	motionManager.deviceMotionUpdateInterval = 1/15.0;
+	motionManager.deviceMotionUpdateInterval = 1/25.0;
 	if (motionManager.deviceMotionAvailable) {
 		
 		NSLog(@"Device Motion Available");
@@ -94,8 +93,6 @@
 											   //CMAttitude *attitude = motion.attitude;
 											   //NSLog(@"rotation rate = [%f, %f, %f]", attitude.pitch, attitude.roll, attitude.yaw);
 											   [self performSelectorOnMainThread:@selector(handleDeviceMotion:) withObject:motion waitUntilDone:YES];
-											   //[self handleDeviceMotion:motion];
-											   
 										   }];
 		//[motionManager startDeviceMotionUpdates];
 	} else {
@@ -104,30 +101,32 @@
 	}
 }
 - (void) initStartOrientationManager {
+	//[self performSelectorOnMainThread:@selector(deviceOrientationChanged:) withObject:self waitUntilDone:YES];
+	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationChanged:)
 												 name:UIDeviceOrientationDidChangeNotification object:nil];
 
 }
+
 - (id) init {
 	if ((self = [super init]))
 	{
 		// register for device orientation change events
 		//[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-		[self performSelectorOnMainThread:@selector(initStartOrientationManager) withObject:nil waitUntilDone:YES];
+		//[self performSelectorOnMainThread:@selector(initStartOrientationManager) withObject:nil waitUntilDone:YES];
 		//[self initStartOrientationManager];
- 
+		NSLog(@"idleManager initialised");
+		
+		NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:5
+														  target:self
+														selector:@selector(tick)
+														userInfo:nil
+														 repeats:YES];
+		
+		//
+		[self startMotionManager];
+		idleTime = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
 	}
-	NSLog(@"idleManager initialised");
-	/*
-	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:5
-													  target:self
-													selector:@selector(tick)
-													userInfo:nil
-											repeats:YES];
-	 */
-	//
-	[self startMotionManager];
-	//
 	return self;
 }
 -(void) deviceOrientationChanged:(NSNotification*)notification {
@@ -148,3 +147,23 @@
 }
 
 @end
+
+/*
+ do
+ {
+ // Run the run loop 10 times to let the timer fire.
+ [myRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+ loopCount--;
+ }
+ while (loopCount);
+ */
+/*
+ do {
+ 
+ [[NSRunLoop mainRunLoop] runUntilDate:[NSDate date]];
+ 
+ } while ([UIDevice currentDevice].orientation == orientation);
+ */
+
+//[[NSRunLoop currentRunLoop] runUntilDate:[NSDate date]];
+

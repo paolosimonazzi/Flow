@@ -8,6 +8,7 @@
 
 #import "Connection.h"
 #import "User.h"
+#import "GPS.h"
 
 @implementation Connection
 
@@ -86,16 +87,66 @@
 	} else {
 	}
 }
+
+- (void) sleepEvent:(BOOL) _begin withTime:(NSTimeInterval) _time {
+	
+	NSMutableDictionary *data = [GPS getLastGpsPosition];
+	
+	NSError* error;
+	User *user = [User getUser];
+	
+	[data setObject:@"SLEEP_TRACE" forKey:@"@class"];
+	
+	[data setObject:[NSString stringWithFormat:@"%ld", user.ID] forKey:@"userId"];
+	
+	[data setObject:[NSNumber numberWithBool:_begin] forKey:@"begin"];
+	
+	[data removeObjectForKey:@"time"];
+	unsigned long timeMs = _time*1000;
+	NSString *time = [NSString stringWithFormat:@"%lu", timeMs];
+
+	[data setObject:time forKey:@"time"];
+	
+	NSLog(@"dictionary sleep: %@", [data description]);
+	
+	NSData* jsonData = [NSJSONSerialization dataWithJSONObject:data
+                                                       options:NSJSONWritingPrettyPrinted
+                                                         error:&error];
+	
+	NSString *strJson = [NSString stringWithUTF8String:[jsonData bytes]];
+	
+	NSLog (@"json str(trace):%@", strJson);
+	
+	return;
+	
+	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://glance-server.herokuapp.com/services/trace"]
+															  cachePolicy:NSURLRequestUseProtocolCachePolicy
+														  timeoutInterval:60.0];
+	[theRequest setHTTPMethod:@"POST"];
+	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+	[theRequest setValue:[NSString stringWithFormat:@"%d", [jsonData length]] forHTTPHeaderField:@"Content-Length"];
+	[theRequest setHTTPBody: jsonData];
+	
+	NSURLConnection *theConnection=[[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
+	if (theConnection) {
+		
+		receivedData = [NSMutableData data];
+	} else {
+	}
+}
+
+
 - (void) tracePosition:(NSMutableDictionary*) data {
 
 	NSError* error;
 	User *user = [User getUser];
 	
 	[data setObject:@"POSITION_TRACE" forKey:@"@class"];
-	//[data setObject:@"65536" forKey:@"userId"];
-	[data setObject:[NSString stringWithFormat:@"%d", user.ID] forKey:@"userId"];
 
-	//NSLog(@"dictionary: %@", [data description]);
+	[data setObject:[NSString stringWithFormat:@"%ld", user.ID] forKey:@"userId"];
+
+	//NSLog(@"dictionary position: %@", [data description]);
 
 	NSData* jsonData = [NSJSONSerialization dataWithJSONObject:data
                                                        options:NSJSONWritingPrettyPrinted
@@ -103,7 +154,7 @@
 
 	NSString *strJson = [NSString stringWithUTF8String:[jsonData bytes]];
 
-	//NSLog (@"json str:%@", strJson);
+	NSLog (@"json str(trace):%@", strJson);
 
 	
 	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://glance-server.herokuapp.com/services/trace"]
@@ -132,9 +183,7 @@
 	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/event/user-%lu/eventFeedPage-%@to%@?wl_width=800&wl_height=200", [User getUser].ID, start_str, stop_str];
 	
 	NSLog(@"events request: %@", urlRequest_str);
-	//http://glance-server.herokuapp.com/services/event/user-1/eventFeedPage?wl_width=800&wl_height=200
-	//@"http://glance-server.herokuapp.com/services/event/user-65536/1361880000000to1361880087160"]
-	
+
 	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlRequest_str]
 															  cachePolicy:NSURLRequestUseProtocolCachePolicy
 															timeoutInterval:60.0];
