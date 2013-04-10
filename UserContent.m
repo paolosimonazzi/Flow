@@ -20,7 +20,7 @@
 @implementation UserContent
 
 @synthesize labelFirstName, loggedInUser, profilePic,
-gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, loading, splashView, fakeButton, labelPlace, labelTime, refreshBackground, refreshLabel, refreshActivityIndicator, waveLine;
+gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, loading, splashView, fakeButton, labelPlace, labelTime, refreshBackground, refreshLabel, refreshActivityIndicator, waveLine, backgroundWaveLine;
 
 
 - (void) createCustomFBLogin {
@@ -84,17 +84,23 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
     }
 }
 */
+- (void) configureWaveLine {
+	waveLine = [[GraphNavigatorViewController alloc] initWithNibName:@"GraphNavigatorViewController" bundle:[NSBundle mainBundle]];
+	CGRect waveLineRect = waveLine.view.frame;
+	waveLine.userContentRef = self;
+	waveLine.view.frame = CGRectMake(0, 350, waveLineRect.size.width, waveLineRect.size.height);
+	[self.view addSubview:waveLine.view];
+
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+	[self configureWaveLine];
 	
-	waveLine = [[GraphNavigatorViewController alloc] initWithNibName:@"GraphNavigatorViewController" bundle:[NSBundle mainBundle]];
-	CGRect waveLineRect = waveLine.view.frame;
-	
-	waveLine.view.frame = CGRectMake(0, 350, waveLineRect.size.width, waveLineRect.size.height);
-	[self.view addSubview:waveLine.view];
 	self.view.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 	self.refreshBackground.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
+	
+	self.backgroundWaveLine.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 
 	// Do any additional setup after loading the view, typically from a nib.
 	// Create Login View so that the app will be granted "status_update" permission.

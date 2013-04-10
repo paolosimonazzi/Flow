@@ -23,6 +23,8 @@
 }
 - (IBAction)postPhotoClick:	(UIButton *)sender;
 - (IBAction)refresh:		(UIButton *)sender;
+- (void)	scrollAtPage:		(int) page;
+
 
 @property (strong, nonatomic) IBOutlet FBProfilePictureView *profilePic;
 @property (strong, nonatomic) IBOutlet UILabel				*labelFirstName;
@@ -50,6 +52,9 @@
 
 @property (nonatomic, retain) IBOutlet UIView				*splashView;
 @property (nonatomic, retain) IBOutlet UIView				*fakeButton;
+
+@property (nonatomic, retain) IBOutlet UIView				*backgroundWaveLine;
+
 
 
 @property (nonatomic, retain) GlancePage *glance;

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@class AsynchUIImageView;
+@class AsynchUIImageView, UserContent;
 
 @interface GraphNavigatorViewController : UIViewController {
 
@@ -17,6 +17,8 @@
 @property (nonatomic, retain) IBOutlet UIImageView *slider;
 
 @property (nonatomic, retain) IBOutlet AsynchUIImageView *waveLine;
+
+@property (nonatomic, retain) UserContent *userContentRef;
 
 - ( void ) loadWaveLine:(NSString*)_url;
 @end
