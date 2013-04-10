@@ -15,10 +15,13 @@
 #import "GlancePage.h"
 #import "User.h"
 
+#import "GraphNavigatorViewController.h"
+
 @implementation UserContent
 
 @synthesize labelFirstName, loggedInUser, profilePic,
-gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, graphImage, loading, splashView, fakeButton, labelPlace, labelTime;
+gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, loading, splashView, fakeButton, labelPlace, labelTime, refreshBackground, refreshLabel, refreshActivityIndicator, waveLine;
+
 
 - (void) createCustomFBLogin {
 	
@@ -84,14 +87,21 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, g
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+	
+	waveLine = [[GraphNavigatorViewController alloc] initWithNibName:@"GraphNavigatorViewController" bundle:[NSBundle mainBundle]];
+	CGRect waveLineRect = waveLine.view.frame;
+	
+	waveLine.view.frame = CGRectMake(0, 350, waveLineRect.size.width, waveLineRect.size.height);
+	[self.view addSubview:waveLine.view];
 	self.view.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
+	self.refreshBackground.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
+
 	// Do any additional setup after loading the view, typically from a nib.
 	// Create Login View so that the app will be granted "status_update" permission.
 	[self createCustomFBLogin];
 
     
-	scrollView.contentSize = CGSizeMake(3200, 385);
+	scrollView.contentSize = CGSizeMake(3200, 356);
 	scrollView.delegate = self;
 	scrollView.showsVerticalScrollIndicator    = NO;
     scrollView.showsHorizontalScrollIndicator  = NO;
@@ -189,8 +199,8 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, g
 	NSDate *today = [NSDate dateWithTimeIntervalSinceNow:0];
 	NSDate *h24Early = [NSDate dateWithTimeIntervalSinceNow:-86400]; //-86400
 	//NSLog(@"time start: %d time stop %d", (int)[dateStart timeIntervalSince1970], (int)[dateStop timeIntervalSince1970]);
-
 	[someDataConnection getEvents:h24Early stop:today];
+	
 }
 
 #pragma mark - connection
@@ -205,11 +215,17 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, g
 													 options:kNilOptions
 													   error:&error];
 	NSArray *array = [dict objectForKey:@"eventViews"];
+	
+	labelPlace.text = [dict objectForKey:@"recentLocationName"];
+	labelTime.text = [dict objectForKey:@"recentLocationTime"];
+	/*
 	if ([array count]) {
 		NSDictionary *lastplace = [array objectAtIndex:0];
 		labelPlace.text = [lastplace objectForKey:@"title"];
 		labelTime.text = [lastplace objectForKey:@"subtitle2"];
 	}
+	 */
+	loading = NO;
 	NSLog(@"num of events: %d", [array count]);
 	int numArray = [array count];
 	numArray = numArray>16?16:numArray;
@@ -227,14 +243,15 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, g
 		if (idx>16)
 			break;
 	}
-	[graphImage loadImageAsync:[dict objectForKey:@"wavelineImageUrl"]];
-	loading = NO;
+	//[graphImage loadImageAsync:[dict objectForKey:@"wavelineImageUrl"] withSpinner:NO];
+	NSLog(@"waveLine: %@", [dict objectForKey:@"wavelineImageUrl"]);
+	[waveLine loadWaveLine:[dict objectForKey:@"wavelineImageUrl"]];
 	scrollView.contentOffset = CGPointMake(2880, 0);
+	[refreshActivityIndicator stopAnimating];
 }
 #pragma mark -
 
 #pragma mark - FBLoginViewDelegate
-
 - (void)loginViewShowingLoggedInUser:(FBLoginView *)loginView {
     // first get the buttons set for login mode
 	NSLog(@"Logged In");
@@ -327,7 +344,6 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, g
 - (IBAction)refresh:(UIButton *)sender {
 //	[self scrollAtRefreshing];
 	scrollView.contentOffset = CGPointMake(2910, 0);
-
 }
 
 #pragma mark - Scrolling Stuff
@@ -336,13 +352,12 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, g
 
 }
 
-- (void) onTick:(NSTimer *)timer {
+
+- (void) refreshTimer:(NSTimer*)_timer {
 	loading = NO;
 	scrollView.contentOffset = CGPointMake(2880, 0);
-
 }
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+- (void) scrollViewDidScroll:(UIScrollView *)scrollView {
 
 	//NSLog(@"%f", scrollView.contentOffset.x);
 	if ( scrollView.contentOffset.x > 2930 ) { //2910
@@ -353,6 +368,12 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, g
 	}
 	if (loading) {
 		scrollView.contentOffset = CGPointMake(2930, 0);
+		NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:0.5
+														  target:self
+														selector:@selector(refreshTimer:)
+														userInfo:nil
+														 repeats:NO];
+		[refreshActivityIndicator startAnimating];
 	}
 }
 

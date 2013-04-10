@@ -12,8 +12,11 @@
 @interface IdleManager : NSObject {
 	NSDate *idleTime;
 	BOOL	movement;
+	BOOL	active;
 }
--(void) deviceOrientationChanged:(NSNotification*)notification;
+- (void) deviceOrientationChanged:(NSNotification*)notification;
+- (void) enable;
+- (void) disable;
 @property (nonatomic, retain) UIAccelerometer *accelerometer;
 @property (nonatomic, retain) CMMotionManager *motionManager;
 

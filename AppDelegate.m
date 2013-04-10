@@ -36,10 +36,7 @@
     [self.window makeKeyAndVisible];
 	
 	idleManager = [[IdleManager alloc] init];
-	/*
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationChanged:)
-												 name:UIDeviceOrientationDidChangeNotification object:nil];
-*/
+
     return YES;
 }
 - (void)applicationWillTerminate:(UIApplication *)application {
@@ -57,6 +54,7 @@
 {
 	// Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
 	// If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+	[idleManager enable];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -71,7 +69,7 @@
     // We need to properly handle activation of the application with regards to SSO
     //  (e.g., returning from iOS 6.0 authorization dialog or from fast app switching).
     [FBSession.activeSession handleDidBecomeActive];
-
+	[idleManager disable];
 }
 
 

@@ -7,18 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
-
+///////////////////////////////////////////////////////////////////////////////////
+// async beautiful image
 @interface AsynchUIImageView : UIImageView {
 	
 }
 
--(void) loadImageAsync:(NSString*)_url;
+-(void) loadImageAsync:(NSString*)_url withSpinner:(BOOL) _spinner;
 
 @property (nonatomic, retain)	UIActivityIndicatorView *activityIndicator;
 
 @end
 
-
+///////////////////////////////////////////////////////////////////////////////////
 @interface ContentPage : UIViewController {
 
 }

@@ -1,0 +1,22 @@
+//
+//  GraphNavigatorViewController.h
+//  Flow
+//
+//  Created by Paolo Simonazzi on 4/10/13.
+//  Copyright (c) 2013 Paolo Simonazzi. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+@class AsynchUIImageView;
+
+@interface GraphNavigatorViewController : UIViewController {
+
+	CGRect          sliderRect;
+	CGRect          stripeRect;
+}
+@property (nonatomic, retain) IBOutlet UIImageView *slider;
+
+@property (nonatomic, retain) IBOutlet AsynchUIImageView *waveLine;
+
+- ( void ) loadWaveLine:(NSString*)_url;
+@end

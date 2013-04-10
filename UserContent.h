@@ -11,7 +11,7 @@
 
 #import "Connection.h"
 
-@class AmazingMenu, GlancePage, AsynchUIImageView;
+@class AmazingMenu, GlancePage, GraphNavitor, GraphNavigatorViewController;
 
 
 @class GPS;
@@ -27,6 +27,11 @@
 @property (strong, nonatomic) IBOutlet FBProfilePictureView *profilePic;
 @property (strong, nonatomic) IBOutlet UILabel				*labelFirstName;
 
+@property (nonatomic, retain) IBOutlet UIView				*refreshBackground;
+@property (nonatomic, retain) IBOutlet UIImageView			*refreshLabel;
+@property (nonatomic, retain) IBOutlet UIActivityIndicatorView	*refreshActivityIndicator;
+
+
 @property (strong, nonatomic) IBOutlet UILabel				*labelPlace;
 @property (strong, nonatomic) IBOutlet UILabel				*labelTime;
 
@@ -35,7 +40,7 @@
 
 @property (nonatomic, retain) IBOutlet UILabel				*userName;
 
-@property (nonatomic, retain) IBOutlet AsynchUIImageView	*graphImage;
+@property (nonatomic, retain) GraphNavigatorViewController		*waveLine;
 
 @property (nonatomic, retain) FBLoginView					*loginview;
 

@@ -22,7 +22,7 @@ NSMutableDictionary *lastGpsInfo;
 	gpsManager.delegate = self;
 	NSLog(@"gps allocated");
 	[gpsManager startUpdatingLocation];
-	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:60
+	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:120//60
 													  target:self
 													selector:@selector(fire)
 													userInfo:nil
@@ -109,7 +109,7 @@ NSMutableDictionary *lastGpsInfo;
 	
 	NSString *gpsStr = [NSString stringWithFormat:@"(%@) %@ Location %.06f %.06f %@", ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) ? @"bg" : @"fg",  @"gps:", newLocation.coordinate.latitude, newLocation.coordinate.longitude, [formatter stringFromDate:newLocation.timestamp]];
 	
-	NSLog(@"log: %@", gpsStr);
+	//NSLog(@"log: %@", gpsStr);
 
 	[connectionsStack push:newLocation];
 }

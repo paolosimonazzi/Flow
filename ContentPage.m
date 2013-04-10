@@ -48,13 +48,13 @@
 	
 	if (_num) {
 		
-		[image1 loadImageAsync:	imageUrl];
+		[image1 loadImageAsync:	imageUrl withSpinner:YES];
 		street1.text = [_dict objectForKey:@"title"];
 		subtitle1_1.text = [_dict objectForKey:@"subtitle1"];
 		subtitle1_2.text = [_dict objectForKey:@"subtitle2"];
 
 	} else {
-		[image2 loadImageAsync:imageUrl];
+		[image2 loadImageAsync:imageUrl withSpinner:YES];
 		street2.text = [_dict objectForKey:@"title"];
 		subtitle2_1.text = [_dict objectForKey:@"subtitle1"];
 		subtitle2_2.text = [_dict objectForKey:@"subtitle2"];
@@ -104,8 +104,9 @@
 
 - (void) contentsBack:(NSData*)_data {
 
-	self.alpha = 0;
-	[activityIndicator removeFromSuperview];
+	//self.alpha = 0;
+	if (activityIndicator)
+		[activityIndicator removeFromSuperview];
 	[self setImage:[UIImage imageWithData:_data]];
 	
 	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:0.1
@@ -115,26 +116,28 @@
 									repeats:NO];
 }
 
-- (void) loadImageAsync:(NSString*)_url {
+- (void) loadImageAsync:(NSString*)_url withSpinner:(BOOL) _spinner {
+	/*
 	self.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:0.0];
 
 	self.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 
-	
+	*/
 	Connection *connectionForTheImage = [[Connection alloc] initWithTarget:self withSelector:@selector(contentsBack:)];
 	[connectionForTheImage loadImage:_url];
 	
 	// create activity indicator
+	if (!_spinner)
+		return;
 	if (!activityIndicator) {
 		CGRect myRect = self.frame;
-
 		activityIndicator = [[UIActivityIndicatorView alloc]
 												  initWithFrame:CGRectMake(myRect.size.width/2-10, myRect.size.height/2-10, 20.0f, 20.0f)];
 		[activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
 	}
 	
 	[self addSubview:activityIndicator];
-	[activityIndicator startAnimating];
+	[activityIndicator stopAnimating];
 
 }
 

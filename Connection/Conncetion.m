@@ -258,7 +258,7 @@
 	
 	NSLog(@"image loading");
 	
-	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:_str] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
+	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:_str] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:160.0];
 	
 	NSURLConnection *theConnection=[[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
 	

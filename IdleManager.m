@@ -10,29 +10,29 @@
 #import "Connection.h"
 
 @implementation IdleManager
+
+#define SLEEPINGTIME 180000
+
 @synthesize accelerometer, motionManager;
 
-- (void) tick {
-	static UIDeviceOrientation orientation = UIDeviceOrientationUnknown;
-	static UIInterfaceOrientation orientation2 = UIDeviceOrientationPortrait;
-	NSRunLoop* myRunLoop = [NSRunLoop mainRunLoop];
-	//NSLog(@"tick");
-    NSInteger    loopCount = 10;
-	NSNotification *not;
-	NSNotificationQueue *queue = [NSNotificationQueue defaultQueue];
-	
-	if ([UIDevice currentDevice].orientation != orientation) {
-		orientation = [UIDevice currentDevice].orientation;
-		NSLog(@"hai spostato il telefono, merda!");
-	}
-	if ([UIApplication sharedApplication].statusBarOrientation != orientation2) {
-		orientation2 = [UIApplication sharedApplication].statusBarOrientation;
-		NSLog(@"hai spostato il telefono, merda2!");
-	}
-	NSNotificationQueue *ntos = [NSNotificationQueue defaultQueue];
-	int ff=0;
-	 
+- (void) enable {
+	active = YES;
+	idleTime = [NSDate dateWithTimeIntervalSinceNow:0];
+	NSLog(@"Device Motion handler started");
+	[motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue currentQueue]
+									   withHandler: ^(CMDeviceMotion *motion, NSError *error){
+										   //CMAttitude *attitude = motion.attitude;
+										   //NSLog(@"rotation rate = [%f, %f, %f]", attitude.pitch, attitude.roll, attitude.yaw);
+										   [self performSelectorOnMainThread:@selector(handleDeviceMotion:) withObject:motion waitUntilDone:YES];
+									   }];
+	//[motionManager startDeviceMotionUpdates];
 }
+- (void) disable {
+	NSLog(@"Device Motion handler stopped");
+	active = NO;
+	[motionManager stopDeviceMotionUpdates];
+}
+
 - (void) wakeUpResponse:(NSData*)data {
 	NSString *str_resp = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 	
@@ -82,11 +82,11 @@
 		
 		NSTimeInterval timeElapsed =  [idleTime timeIntervalSinceNow]*-1;
 
-		NSLog(@"idle time: %f", timeElapsed);
+		//NSLog(@"idle time: %f", timeElapsed);
 		
 		movement = NO;
 		
-		if (timeElapsed > 21600) {
+		if (timeElapsed > SLEEPINGTIME) {
 			Connection *conn = [[Connection alloc] initWithTarget:self withSelector:@selector(sleepResponse:)];
 			conn.retry = 5;
 			[conn sleepEvent:YES withTime:timeElapsed];
@@ -103,15 +103,7 @@
 	
 	motionManager.deviceMotionUpdateInterval = 1/25.0;
 	if (motionManager.deviceMotionAvailable) {
-		
-		NSLog(@"Device Motion Available");
-		[motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue currentQueue]
-										   withHandler: ^(CMDeviceMotion *motion, NSError *error){
-											   //CMAttitude *attitude = motion.attitude;
-											   //NSLog(@"rotation rate = [%f, %f, %f]", attitude.pitch, attitude.roll, attitude.yaw);
-											   [self performSelectorOnMainThread:@selector(handleDeviceMotion:) withObject:motion waitUntilDone:YES];
-										   }];
-		//[motionManager startDeviceMotionUpdates];
+		[self enable];
 	} else {
 		NSLog(@"No device motion on device.");
 		[self setMotionManager:nil];
@@ -128,19 +120,12 @@
 - (id) init {
 	if ((self = [super init]))
 	{
-		// register for device orientation change events
+
 		//[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 		//[self performSelectorOnMainThread:@selector(initStartOrientationManager) withObject:nil waitUntilDone:YES];
 		//[self initStartOrientationManager];
 		NSLog(@"idleManager initialised");
-		
-		NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:5
-														  target:self
-														selector:@selector(tick)
-														userInfo:nil
-														 repeats:YES];
-		
-		//
+
 		[self startMotionManager];
 		idleTime = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
 	}
@@ -156,13 +141,14 @@
 	int app=0;
 
 }
+/*
 - (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
 	NSLog(@"%@", [NSString stringWithFormat:@"%@%f", @"X: ", acceleration.x]);
 	NSLog(@"%@", [NSString stringWithFormat:@"%@%f", @"Y: ", acceleration.y]);
 	NSLog(@"%@",  [NSString stringWithFormat:@"%@%f", @"Z: ", acceleration.z]);
 	
 }
-
+*/
 @end
 
 /*

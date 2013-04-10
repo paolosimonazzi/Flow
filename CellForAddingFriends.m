@@ -238,13 +238,13 @@
 	
 	switch (num) {
 		case 0:
-			[user0 loadImageAsync:url_str];
+			[user0 loadImageAsync:url_str withSpinner:YES];
 			break;
 		case 1:
-			[user1 loadImageAsync:url_str];
+			[user1 loadImageAsync:url_str withSpinner:YES];
 			break;
 		case 2:
-			[user2 loadImageAsync:url_str];
+			[user2 loadImageAsync:url_str withSpinner:YES];
 			break;
 			
 		default:
