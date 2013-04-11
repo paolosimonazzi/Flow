@@ -84,11 +84,19 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
     }
 }
 */
+
+- (BOOL)hasFourInchDisplay {
+    return ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone && [UIScreen mainScreen].bounds.size.height == 568.0);
+}
 - (void) configureWaveLine {
 	waveLine = [[GraphNavigatorViewController alloc] initWithNibName:@"GraphNavigatorViewController" bundle:[NSBundle mainBundle]];
 	CGRect waveLineRect = waveLine.view.frame;
 	waveLine.userContentRef = self;
-	waveLine.view.frame = CGRectMake(0, 350, waveLineRect.size.width, waveLineRect.size.height);
+	if ([self hasFourInchDisplay]) {
+		waveLine.view.frame = CGRectMake(0, 440, waveLineRect.size.width, waveLineRect.size.height);
+	} else {
+		waveLine.view.frame = CGRectMake(0, 335, waveLineRect.size.width, waveLineRect.size.height);
+	}
 	[self.view addSubview:waveLine.view];
 
 }
@@ -101,13 +109,13 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	self.refreshBackground.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 	
 	self.backgroundWaveLine.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
-
+	 
 	// Do any additional setup after loading the view, typically from a nib.
 	// Create Login View so that the app will be granted "status_update" permission.
 	[self createCustomFBLogin];
 
     
-	scrollView.contentSize = CGSizeMake(3200, 356);
+	scrollView.contentSize = CGSizeMake(3200, 305);
 	scrollView.delegate = self;
 	scrollView.showsVerticalScrollIndicator    = NO;
     scrollView.showsHorizontalScrollIndicator  = NO;
@@ -203,7 +211,7 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	//NSDate *dateStop = [dateFormat dateFromString:dateStopStr];
 	
 	NSDate *today = [NSDate dateWithTimeIntervalSinceNow:0];
-	NSDate *h24Early = [NSDate dateWithTimeIntervalSinceNow:-86400]; //-86400
+	NSDate *h24Early = [NSDate dateWithTimeIntervalSinceNow:-146400]; //-86400
 	//NSLog(@"time start: %d time stop %d", (int)[dateStart timeIntervalSince1970], (int)[dateStop timeIntervalSince1970]);
 	[someDataConnection getEvents:h24Early stop:today];
 	

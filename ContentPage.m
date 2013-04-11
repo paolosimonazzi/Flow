@@ -104,7 +104,7 @@
 
 - (void) contentsBack:(NSData*)_data {
 
-	//self.alpha = 0;
+	self.alpha = 0;
 	if (activityIndicator)
 		[activityIndicator removeFromSuperview];
 	[self setImage:[UIImage imageWithData:_data]];
@@ -119,10 +119,10 @@
 - (void) loadImageAsync:(NSString*)_url withSpinner:(BOOL) _spinner {
 	/*
 	self.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:0.0];
-
+	 
 	self.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
-
-	*/
+*/
+	
 	Connection *connectionForTheImage = [[Connection alloc] initWithTarget:self withSelector:@selector(contentsBack:)];
 	[connectionForTheImage loadImage:_url];
 	
