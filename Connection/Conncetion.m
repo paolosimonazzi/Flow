@@ -51,7 +51,7 @@
 	NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
 	int code = [httpResponse statusCode];
 	
-	NSLog(@"http response:%d", code);
+	//NSLog(@"http response:%d", code);
 	
 	if ( (code != 201 ) && (code != 200) ) {
 		if (retry) {
@@ -196,7 +196,7 @@
 
 	NSString *strJson = [NSString stringWithUTF8String:[jsonData bytes]];
 
-	NSLog (@"json str(trace):%@", strJson);
+	//NSLog (@"json str(trace):%@", strJson);
 
 	
 	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://glance-server.herokuapp.com/services/trace"]
@@ -255,8 +255,6 @@
 }
 
 - (void) loadImage:(NSString*)_str {
-	
-	NSLog(@"image loading");
 	
 	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:_str] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:160.0];
 	

@@ -16,6 +16,7 @@
 #import "User.h"
 
 #import "GraphNavigatorViewController.h"
+#import "ScrollableEvents.h"
 
 @implementation UserContent
 
@@ -93,13 +94,21 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	CGRect waveLineRect = waveLine.view.frame;
 	waveLine.userContentRef = self;
 	if ([self hasFourInchDisplay]) {
-		waveLine.view.frame = CGRectMake(0, 440, waveLineRect.size.width, waveLineRect.size.height);
+		waveLine.view.frame = CGRectMake(0, 423, waveLineRect.size.width, waveLineRect.size.height);
 	} else {
 		waveLine.view.frame = CGRectMake(0, 335, waveLineRect.size.width, waveLineRect.size.height);
 	}
 	[self.view addSubview:waveLine.view];
 
 }
+/*
+- (void) configureScrollContent:(int) _numEvents {
+
+	int sizeOfcontent = _numEvents * 320;
+	scrollView.contentSize = CGSizeMake(sizeOfcontent, 305);
+	
+}
+ */
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -113,22 +122,20 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	// Do any additional setup after loading the view, typically from a nib.
 	// Create Login View so that the app will be granted "status_update" permission.
 	[self createCustomFBLogin];
-
     
-	scrollView.contentSize = CGSizeMake(3200, 305);
-	scrollView.delegate = self;
-	scrollView.showsVerticalScrollIndicator    = NO;
-    scrollView.showsHorizontalScrollIndicator  = NO;
-	
+
 	
 	gpsManager = [[GPS alloc] init];
 	profileView.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 	
-	[self addEvent:profileView atPage:0];
-	
-	[self scrollAtPage:9];
 
-	contentPages = [[NSMutableArray alloc] initWithObjects:profileView, nil];
+	[scrollView addEvent:profileView];
+
+	//[self scrollAtPage:9];
+	
+	//[self scrollAtPage:1];
+	
+	//contentPages = [[NSMutableArray alloc] initWithObjects:profileView, nil];
 	
 	//[self menuCreation];
 	
@@ -167,51 +174,52 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 
     [UIView commitAnimations];
 }
-
+/*
 - (void) scrollAtPage:(int) page {
-	
-    CGRect scrollRect = CGRectMake(page * 320, 50, 320, 302);
+	int limit = (numberOfPages - page) * 320;
+    CGRect scrollRect = CGRectMake (limit * 320, 50, 320, 302);
     [scrollView scrollRectToVisible:scrollRect animated:YES];
-
 }
+*/
 - (void) scrollAtRefreshing {
 	CGRect scrollRect = CGRectMake(2050, 50, 320, 302);
     [scrollView scrollRectToVisible:scrollRect animated:YES];
 }
+/*
 - (void) flushEvents {
 	NSLog(@"flush events");
-	for (int idx=1; idx<[contentPages count]; idx++) {
+	for (int idx = 0; idx<[contentPages count]; idx++) {
 		UIView *pageToFlush = [contentPages objectAtIndex:idx];
 		[pageToFlush removeFromSuperview];
 	}
 	[contentPages removeAllObjects];
 }
+*/
+/*
 - (void) addEvent:(UIView*) event atPage:(int)page {
-
+	
 	[contentPages addObject:event];
 	int pageWide = 320;
-	int xPos = (3200-pageWide) - page*pageWide;
+	int xPos = (numberOfPages*pageWide-pageWide) - page*pageWide;
 	
 	event.frame = CGRectMake(event.frame.origin.x + xPos, event.frame.origin.y, event.frame.size.width, event.frame.size.height);
 	[scrollView addSubview:event];
 }
-
+*/
 - (void)getEvents {
 	
-	[self flushEvents];
+	[scrollView flushEvents];
 	
-	loading = YES;
+	scrollView.loading = loading = YES;
 	Connection *someDataConnection = [[Connection alloc] initWithTarget:self withSelector:@selector(eventsBack:)];
 
 	NSString *dateStartStr = @"20130307";
 	// Convert string to date object
 	NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
 	[dateFormat setDateFormat:@"yyyyMMdd"];
-	
-	//NSDate *dateStop = [dateFormat dateFromString:dateStopStr];
-	
+		
 	NSDate *today = [NSDate dateWithTimeIntervalSinceNow:0];
-	NSDate *h24Early = [NSDate dateWithTimeIntervalSinceNow:-146400]; //-86400
+	NSDate *h24Early = [NSDate dateWithTimeIntervalSinceNow:-266400]; //-86400
 	//NSLog(@"time start: %d time stop %d", (int)[dateStart timeIntervalSince1970], (int)[dateStop timeIntervalSince1970]);
 	[someDataConnection getEvents:h24Early stop:today];
 	
@@ -228,27 +236,24 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:_data //1
 													 options:kNilOptions
 													   error:&error];
-	NSArray *array = [dict objectForKey:@"eventViews"];
+	NSArray *array	= [dict objectForKey:@"eventViews"];
 	
 	labelPlace.text = [dict objectForKey:@"recentLocationName"];
-	labelTime.text = [dict objectForKey:@"recentLocationTime"];
-	/*
-	if ([array count]) {
-		NSDictionary *lastplace = [array objectAtIndex:0];
-		labelPlace.text = [lastplace objectForKey:@"title"];
-		labelTime.text = [lastplace objectForKey:@"subtitle2"];
-	}
-	 */
+	labelTime.text	= [dict objectForKey:@"recentLocationTime"];
+
 	loading = NO;
-	NSLog(@"num of events: %d", [array count]);
-	int numArray = [array count];
-	numArray = numArray>16?16:numArray;
+	numberOfEvents = [array count];
+	//numberOfEvents = 2;
+	numberOfPages = numberOfEvents/2;
+	NSLog(@"num of events: %d", numberOfEvents);
+	//[self configureScrollContent:numberOfEvents];
+	//[scrollView setSize:numberOfPages];
+	//[self addEvent:profileView atPage:0];
+	[scrollView addEvent:profileView];
 	
-	for (int idx = 0; idx<numArray; idx+=2) {
+	for (int idx = 0; idx < numberOfEvents; idx+=2) {
 		
 		ContentPage *son = [[ContentPage alloc]	initWithNibName:@"ContentPage" bundle:[NSBundle mainBundle]];
-		
-		[self addEvent:son.view atPage:idx/2+1];
 
 		[son loadContent:FIRSTCONTENT withData:[array objectAtIndex:idx]];
 		if (idx < [array count]-1) {
@@ -256,12 +261,16 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 		}
 		if (idx>16)
 			break;
+		
+		//[self addEvent:son.view atPage:idx/2+1];
+		[scrollView addEvent:son.view];
+
 	}
-	//[graphImage loadImageAsync:[dict objectForKey:@"wavelineImageUrl"] withSpinner:NO];
 	NSLog(@"waveLine: %@", [dict objectForKey:@"wavelineImageUrl"]);
 	[waveLine loadWaveLine:[dict objectForKey:@"wavelineImageUrl"]];
-	scrollView.contentOffset = CGPointMake(2880, 0);
+
 	[refreshActivityIndicator stopAnimating];
+	[scrollView scrollAtPage:0];
 }
 #pragma mark -
 
@@ -357,49 +366,55 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 
 - (IBAction)refresh:(UIButton *)sender {
 //	[self scrollAtRefreshing];
-	scrollView.contentOffset = CGPointMake(2910, 0);
+	//scrollView.contentOffset = CGPointMake(2910, 0);
 }
-
+/*
 #pragma mark - Scrolling Stuff
 
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)_scrollView {
-
+	
 }
 
 
 - (void) refreshTimer:(NSTimer*)_timer {
 	loading = NO;
-	scrollView.contentOffset = CGPointMake(2880, 0);
+	//scrollView.contentOffset = CGPointMake(2880, 0);
 }
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView {
-
-	//NSLog(@"%f", scrollView.contentOffset.x);
-	if ( scrollView.contentOffset.x > 2930 ) { //2910
 	
+	NSLog(@"%f", scrollView.contentOffset.x);
+	if ( scrollView.contentOffset.x > 380) { //2910
+		
 		if (!loading) {
-			[self getEvents];
+			//[self getEvents];
 		}
 	}
 	if (loading) {
-		scrollView.contentOffset = CGPointMake(2930, 0);
+		//scrollView.contentOffset = CGPointMake((numberOfEvents-1)*320, 0);
 		NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:0.5
 														  target:self
 														selector:@selector(refreshTimer:)
 														userInfo:nil
 														 repeats:NO];
-		[refreshActivityIndicator startAnimating];
+		//[refreshActivityIndicator startAnimating];
 	}
+	int page = scrollView.contentOffset.x*0.003 + 0;
+	//NSLog(@"scroll: %f, page: %d", scrollView.contentOffset.x, page);
+	//[waveLine setMarkerAtPage:page];
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
 	
 	NSLog(@"finish");
-
+	
 }
+
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+	
+	//[waveLine setMarkerAtPage:scrollView.contentOffset.x/480];
 }
 
 
 #pragma mark -
-
+*/
 @end

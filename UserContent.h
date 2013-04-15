@@ -11,7 +11,7 @@
 
 #import "Connection.h"
 
-@class AmazingMenu, GlancePage, GraphNavitor, GraphNavigatorViewController;
+@class AmazingMenu, GlancePage, GraphNavitor, GraphNavigatorViewController, ScrollableEvents;
 
 
 @class GPS;
@@ -20,6 +20,8 @@
 
 	NSMutableArray	*contentPages;
 	AmazingMenu		*menu;
+	int				numberOfEvents;
+	int				numberOfPages;
 }
 - (IBAction)postPhotoClick:	(UIButton *)sender;
 - (IBAction)refresh:		(UIButton *)sender;
@@ -42,11 +44,11 @@
 
 @property (nonatomic, retain) IBOutlet UILabel				*userName;
 
-@property (nonatomic, retain) GraphNavigatorViewController		*waveLine;
+@property (nonatomic, retain) GraphNavigatorViewController	*waveLine;
 
 @property (nonatomic, retain) FBLoginView					*loginview;
 
-@property (nonatomic, retain) IBOutlet UIScrollView			*scrollView;
+@property (nonatomic, retain) IBOutlet ScrollableEvents		*scrollView;
 
 @property (nonatomic, retain) IBOutlet UIView				*profileView;
 

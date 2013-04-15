@@ -37,14 +37,14 @@
 	NSString *imageUrl;
 	
 	if ([url_str rangeOfString:@"place"].location == NSNotFound) {
-		NSLog(@"street!");
+		//NSLog(@"street!");
 		imageUrl = [url_str stringByReplacingOccurrencesOfString:@"200x200" withString:@"640x336"];
 	} else {
-		NSLog(@"place!");
+		//NSLog(@"place!");
 		imageUrl = [url_str stringByReplacingOccurrencesOfString:@"height=200" withString:@"width=640"];
 	}
 	
-	NSLog(@"%@", imageUrl);
+	//NSLog(@"%@", imageUrl);
 	
 	if (_num) {
 		
@@ -68,6 +68,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+	//self.view.frame = CGRectMake(0, 0, 320, 383);
     // Do any additional setup after loading the view from its nib.
 }
 

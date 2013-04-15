@@ -15,7 +15,7 @@
 
 @implementation GraphNavigatorViewController
 
-@synthesize slider, waveLine, userContentRef;
+@synthesize slider, waveLine, userContentRef, timeLabel;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -35,17 +35,20 @@
     if ([self checkBound:app.y])
         return;
     */
-    [UIView beginAnimations:nil context:NULL]; {
-		[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-		[UIView setAnimationDuration:0.2];
-		[UIView setAnimationDelegate:self];
-        
-		//slider.frame = CGRectMake(sliderRect.origin.x,app.y-(sliderRect.size.height/2),sliderRect.size.width,sliderRect.size.height);
-		slider.frame = CGRectMake(app.x-(sliderRect.size.width/2), sliderRect.origin.y, sliderRect.size.width, sliderRect.size.height);
+
+	
+    
+	[UIView beginAnimations:nil context:NULL]; {
+	[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+	[UIView setAnimationDuration:0.2];
+	[UIView setAnimationDelegate:self];
+   	timeLabel.alpha = 1;
+    
+	//slider.frame = CGRectMake(sliderRect.origin.x,app.y-(sliderRect.size.height/2),sliderRect.size.width,sliderRect.size.height);
+	slider.frame = CGRectMake(app.x-(sliderRect.size.width/2), sliderRect.origin.y, sliderRect.size.width, sliderRect.size.height);
 		
     }
     [UIView commitAnimations];
-
 }
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
     
@@ -59,13 +62,33 @@
 	slider.frame = CGRectMake(app.x-(sliderRect.size.width/2), sliderRect.origin.y, sliderRect.size.width, sliderRect.size.height);
 
 }
+
+- ( void ) setMarkerAtPage:(int) _page {
+
+	sliderRect = slider.frame;
+	[UIView beginAnimations:nil context:NULL]; {
+	[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+	[UIView setAnimationDuration:0.2];
+	[UIView setAnimationDelegate:self];
+		slider.frame = CGRectMake( _page*40,  sliderRect.origin.y,sliderRect.size.width, sliderRect.size.height);
+	}
+	[UIView commitAnimations];
+}
+
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     
     sliderRect = slider.frame;
     stripeRect = self.view.frame;
-	int pageToScrollTo = sliderRect.origin.x*0.025 + 1;
+	int pageToScrollTo = sliderRect.origin.x * 0.025 + 1;
 	
 	[userContentRef scrollAtPage:pageToScrollTo];
+	[UIView beginAnimations:nil context:NULL]; {
+	[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+	[UIView setAnimationDuration:1];
+	[UIView setAnimationDelegate:self];
+		timeLabel.alpha = 0;
+	}
+	[UIView commitAnimations];
 }
 
 -(void) loadWaveLine:(NSString*)_url {

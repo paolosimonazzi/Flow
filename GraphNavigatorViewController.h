@@ -14,11 +14,13 @@
 	CGRect          sliderRect;
 	CGRect          stripeRect;
 }
-@property (nonatomic, retain) IBOutlet UIImageView *slider;
+@property (nonatomic, retain) IBOutlet UIImageView	*slider;
+@property (nonatomic, retain) IBOutlet UILabel		*timeLabel;
 
 @property (nonatomic, retain) IBOutlet AsynchUIImageView *waveLine;
 
 @property (nonatomic, retain) UserContent *userContentRef;
 
 - ( void ) loadWaveLine:(NSString*)_url;
+- ( void ) setMarkerAtPage:(int) _page;
 @end
