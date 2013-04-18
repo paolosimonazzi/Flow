@@ -19,9 +19,11 @@
 //@property (nonatomic, assign) int loading;
 @property (nonatomic, retain) UserContent *userContentRef;
 
-- (void) scrollAtPage:	(int) _page;
-- (void) addEvent:		(UIView*) event;
-- (void) addEvents:		(NSArray*) _events;
+- (void) scrollAtPage:		(int) _page;
+- (void) addEvent:			(UIView*) _event;
+- (void) addEvents:			(NSArray*) _events;
+
+- (void) scrollAtPercentage:(float)_percentage;
 
 - (void) flushEvents;
 @property (nonatomic, assign) BOOL loading;

@@ -167,13 +167,12 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 
     [UIView commitAnimations];
 }
-/*
-- (void) scrollAtPage:(int) page {
-	int limit = (numberOfPages - page) * 320;
-    CGRect scrollRect = CGRectMake (limit * 320, 50, 320, 302);
-    [scrollView scrollRectToVisible:scrollRect animated:YES];
+
+- (void) scrollContents:(float) _percentage {
+	[scrollView scrollAtPercentage:_percentage];
+    //[scrollView scrollRectToVisible:scrollRect animated:YES];
 }
-*/
+
 - (void) scrollAtRefreshing {
 	CGRect scrollRect = CGRectMake(2050, 50, 320, 302);
     [scrollView scrollRectToVisible:scrollRect animated:YES];
@@ -213,7 +212,7 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	[dateFormat setDateFormat:@"yyyyMMdd"];
 		
 	NSDate *today = [NSDate dateWithTimeIntervalSinceNow:0];
-	NSDate *h24Early = [NSDate dateWithTimeIntervalSinceNow:-266400]; //-86400
+	NSDate *h24Early = [NSDate dateWithTimeIntervalSinceNow:-86400]; //-86400 //266400
 	//NSLog(@"time start: %d time stop %d", (int)[dateStart timeIntervalSince1970], (int)[dateStop timeIntervalSince1970]);
 	[someDataConnection getEvents:_userId start:h24Early stop:today];
 }
@@ -265,11 +264,6 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 		if (idx < [array count]-1) {
 			[son loadContent:SECONDCONTENT withData:[array objectAtIndex:idx+1]];
 		}
-		/*
-		if (idx>16)
-			break;
-		 */
-		//[scrollView addEvent:son.view];
 		[events addObject:son.view];
 	}
 	[scrollView addEvents:events];
