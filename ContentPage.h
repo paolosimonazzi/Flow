@@ -13,7 +13,8 @@
 	
 }
 
--(void) loadImageAsync:(NSString*)_url withSpinner:(BOOL) _spinner;
+- (void) loadImageAsync:(NSString*)_url withSpinner:(BOOL) _spinner;
+- (void) blankImage;
 
 @property (nonatomic, retain)	UIActivityIndicatorView *activityIndicator;
 
@@ -25,7 +26,6 @@
 }
 
 - (void) loadContent:(int)_num withData:(NSDictionary*)_dict;
-
 
 @property (nonatomic, retain) IBOutlet AsynchUIImageView *image1;
 

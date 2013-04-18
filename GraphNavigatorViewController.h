@@ -22,5 +22,8 @@
 @property (nonatomic, retain) UserContent *userContentRef;
 
 - ( void ) loadWaveLine:(NSString*)_url;
-- ( void ) setMarkerAtPage:(int) _page;
+- ( void ) blankWaveLine;
+//- ( void ) setMarkerAtPage:(int) _page;
+- ( void ) setMarkerAt:(float) _absolutePosition;
+
 @end

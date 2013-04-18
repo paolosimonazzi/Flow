@@ -116,7 +116,9 @@
 								   userInfo:nil
 									repeats:NO];
 }
-
+- (void) blankImage {
+	[self setImage:nil];
+}
 - (void) loadImageAsync:(NSString*)_url withSpinner:(BOOL) _spinner {
 	/*
 	self.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:0.0];

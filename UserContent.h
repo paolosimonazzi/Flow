@@ -27,7 +27,9 @@
 - (IBAction)postPhotoClick:	(UIButton *)sender;
 - (void)	scrollAtPage:		(int) page;
 - (void)	getEvents:(unsigned long) _userId;
+- (void)	scrollContents:(float) _percentage;
 
+- (void) moveTheMarker:(float)_absolutePosition;
 
 @property (strong, nonatomic) IBOutlet FBProfilePictureView *profilePic;
 @property (nonatomic, retain) IBOutlet AsynchUIImageView	*friendPic;

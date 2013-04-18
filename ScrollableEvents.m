@@ -49,11 +49,11 @@ int threshold = 0;
 	pages = _pages;
 	int sizeOfcontent = (_pages+1) * 320;//+1
 	self.contentSize = CGSizeMake(sizeOfcontent, 305);
-	threshold = pages>1?(pages-1)*320+refreshAsset:320+refreshAsset;
-
+	//threshold = pages>1?(pages)*320+refreshAsset:320+refreshAsset;
+	threshold = pages*320+refreshAsset;
 	int limit = pages * 320;
 	CGRect scrollRect = CGRectMake (limit, 50, 320, 302);
-    [self scrollRectToVisible:scrollRect animated:YES];
+    [self scrollRectToVisible:scrollRect animated:NO];
 }
 
 - (void) flushEvents {
@@ -71,7 +71,9 @@ int threshold = 0;
 	[self setSize:pages];
 }
 - (void) scrollAtPercentage:(float)_percentage {
-	
+	int pageTo = _percentage*pages;
+	//NSLog(@"page at: %d", pageTo);
+	[self scrollAtPage:pageTo];
 }
 
 - (void) addEvents:(NSArray*) _events {
@@ -88,6 +90,7 @@ int threshold = 0;
 	}
 
 	[self setSize:pages];
+	//NSLog(@"total pages: %d", pages);
 }
 - (void) addEvent:(UIView*) _event {
 	
@@ -120,89 +123,83 @@ bool scrolling = NO;
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)_scrollView {
 	
 }
-BOOL timerExist = NO;
+BOOL timerExist = NO, dragging = NO;
 bool blockRefreshing = NO;
 NSTimer *timer = nil;
 
+/*
 - (void) refreshTimer:(NSTimer*)_timer {
 	self.contentOffset = CGPointMake((pages)*320, 0);
 	NSLog(@"offset: %f", self.contentOffset);
 	blockRefreshing = NO;
 	timer = nil;
 }
+ */
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView {
 	
 	static int refThreshold = -1;
-
+	static int fuckingCounter = 0;
+	static int fuckingCounter2 = 0;
 	//NSLog(@"%f", scrollView.contentOffset.x);
-	
+	if (!dragging) {
+		return;
+	}
 	if ( scrollView.contentOffset.x > threshold) { //2910
-		NSLog(@" ** LOADING EVENTS **");
 		//[userContentRef refresh];
 		refThreshold = threshold;
-		scrolling = YES;
+		if (!blockRefreshing) {
+			/*
+			NSLog(@" ** LOADING EVENTS **");
+			[userContentRef refresh];
+			 */
+		}
 		blockRefreshing = YES;
 	}
 	if (blockRefreshing) {
 		self.contentOffset = CGPointMake(refThreshold, 0);
-		if (nil == timer) {
-			timer = [NSTimer scheduledTimerWithTimeInterval:1.0
-												 target:self
-											   selector:@selector(refreshTimer:)
-											   userInfo:nil
-												repeats:NO];
-		}
-	}
-	//int page = scrollView.contentOffset.x * 0.003 + 0;
-	//NSLog(@"scroll: %f, page: %d", scrollView.contentOffset.x, page);
-	//[waveLine setMarkerAtPage:page];
-}
-
-/*
-- (void) scrollViewDidScroll:(UIScrollView *)scrollView {
-	
-	static int refThreshold = -1;
-	static NSTimer *timer;
-	//NSLog(@"%f", scrollView.contentOffset.x);
-
-	if (( scrollView.contentOffset.x > threshold) && (!loading)) { //2910
-		if (!loading) {
-			NSLog(@" ** LOADING EVENTS **");
-			//[userContentRef refresh];
-			refThreshold = threshold;
-			scrolling = YES;
-		}
-	} 
-	if (loading) {
+		fuckingCounter++;
 		
-		if (scrolling) {
-			if (!timerExist) {
-				timer = [NSTimer scheduledTimerWithTimeInterval:1.0
-															  target:self
-															selector:@selector(refreshTimer:)
-															userInfo:nil
-															 repeats:NO];
-				timerExist = YES;
-			}
-			self.contentOffset = CGPointMake(refThreshold, 0);
+		if (fuckingCounter>20) {
+			blockRefreshing = NO;
+			fuckingCounter2++;
+			//self.contentOffset = CGPointMake((pages)*320, 0);
+			
+			NSLog(@" ** LOADING EVENTS **");
+			[userContentRef refresh];
+			fuckingCounter = 0;
+			//self.contentOffset = CGPointMake((pages)*320, 0);
 		}
+	}
+	if (fuckingCounter2)
+		fuckingCounter2++;
+	if (fuckingCounter2>60) {
+		fuckingCounter2 = 0;
+		//self.contentOffset = CGPointMake((pages)*320, 0);
 	}
 	//int page = scrollView.contentOffset.x * 0.003 + 0;
 	//NSLog(@"scroll: %f, page: %d", scrollView.contentOffset.x, page);
 	//[waveLine setMarkerAtPage:page];
 }
-*/
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+	dragging = YES;
+}
+
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
-	
-	NSLog(@"finish");
-	scrolling = NO;
-	
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
 	
 	//[waveLine setMarkerAtPage:scrollView.contentOffset.x/480];
 }
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+	dragging = NO;
+	float absPos = (scrollView.contentOffset.x/320)/pages;
+	//NSLog(@"absPos: %f", absPos);
+	[userContentRef moveTheMarker:absPos];
+	
+}
+
 
 
 #pragma mark -

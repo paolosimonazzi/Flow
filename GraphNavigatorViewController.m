@@ -34,10 +34,9 @@
 	/*
     if ([self checkBound:app.y])
         return;
-    */
+	 */
+	fireEnabled = YES;
 
-	
-    
 	[UIView beginAnimations:nil context:NULL]; {
 	[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
 	[UIView setAnimationDuration:0.2];
@@ -50,27 +49,32 @@
     }
     [UIView commitAnimations];
 }
+- ( void ) blankWaveLine {
+	[waveLine blankImage];
+}
+
+bool fireEnabled = NO;
+
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
     
     UITouch *touch = [touches anyObject];
     
     sliderRect = slider.frame;
     stripeRect = self.view.frame;
-    
+    fireEnabled = YES;
     CGPoint app = [touch locationInView:self.view];
 
 	slider.frame = CGRectMake(app.x-(sliderRect.size.width/2), sliderRect.origin.y, sliderRect.size.width, sliderRect.size.height);
-
 }
-
-- ( void ) setMarkerAtPage:(int) _page {
+- ( void ) setMarkerAt:(float) _absolutePosition {
 
 	sliderRect = slider.frame;
+	fireEnabled = NO;
 	[UIView beginAnimations:nil context:NULL]; {
 	[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
 	[UIView setAnimationDuration:0.2];
 	[UIView setAnimationDelegate:self];
-		slider.frame = CGRectMake( _page*40,  sliderRect.origin.y,sliderRect.size.width, sliderRect.size.height);
+		slider.frame = CGRectMake( _absolutePosition*320,  sliderRect.origin.y,sliderRect.size.width, sliderRect.size.height);
 	}
 	[UIView commitAnimations];
 }
@@ -80,8 +84,11 @@
     sliderRect = slider.frame;
     stripeRect = self.view.frame;
 	int pageToScrollTo = sliderRect.origin.x * 0.025 + 1;
-	
-	[userContentRef scrollAtPage:pageToScrollTo];
+	float perc = 1 - (sliderRect.origin.x+sliderRect.size.width/2)/320;
+	//[userContentRef scrollAtPage:pageToScrollTo];
+	if (fireEnabled)
+		[userContentRef scrollContents:perc];
+	NSLog(@"nagitator percentage: %f",perc);
 	[UIView beginAnimations:nil context:NULL]; {
 	[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
 	[UIView setAnimationDuration:1];
@@ -93,7 +100,7 @@
 
 -(void) loadWaveLine:(NSString*)_url {
 	
-	[waveLine loadImageAsync:_url withSpinner:NO];
+	[waveLine loadImageAsync:_url withSpinner:NO];	
 
 }
 

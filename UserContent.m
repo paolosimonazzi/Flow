@@ -122,9 +122,7 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	// Do any additional setup after loading the view, typically from a nib.
 	// Create Login View so that the app will be granted "status_update" permission.
 	[self createCustomFBLogin];
-    
-
-	
+    	
 	gpsManager = [[GPS alloc] init];
 	profileView.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 	
@@ -173,6 +171,10 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
     //[scrollView scrollRectToVisible:scrollRect animated:YES];
 }
 
+- (void) moveTheMarker:(float)_absolutePosition {
+	[waveLine setMarkerAt:_absolutePosition];
+}
+
 - (void) scrollAtRefreshing {
 	CGRect scrollRect = CGRectMake(2050, 50, 320, 302);
     [scrollView scrollRectToVisible:scrollRect animated:YES];
@@ -201,9 +203,10 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 - (void) getEvents:(unsigned long)_userId {
 	lastUser = _userId;
 	[refreshActivityIndicator startAnimating];
-	[scrollView flushEvents];
+	//[scrollView flushEvents];
 	
 	scrollView.loading = loading = YES;
+	[waveLine blankWaveLine];
 	Connection *someDataConnection = [[Connection alloc] initWithTarget:self withSelector:@selector(eventsBack:)];
 
 	NSString *dateStartStr = @"20130307";
@@ -236,6 +239,7 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 - (void) eventsBack:(NSData*)_data {
 
 	NSError* error;
+	[scrollView flushEvents];
 
 	NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:_data //1
 													 options:kNilOptions
