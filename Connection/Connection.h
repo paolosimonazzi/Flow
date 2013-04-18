@@ -26,7 +26,9 @@
 
 
 - (void) tracePosition:		(NSMutableDictionary*) data;
-- (void) getEvents:			(NSDate*)start stop:(NSDate*) stop;
+
+- (void) getEvents:(unsigned long)_user start:(NSDate*)_start stop:(NSDate*)_stop;
+
 - (void) loadImage:			(NSString*)_str;
 - (void) loadUsersNetwork;
 

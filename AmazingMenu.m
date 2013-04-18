@@ -12,6 +12,7 @@
 #import "AddFriends.h"
 #import "Settings.h"
 
+#import "User.h"
 @interface AmazingMenu ()
 
 @end
@@ -128,17 +129,20 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
--(IBAction) backButtonClick:	(id) sender {
+-(IBAction) backButtonClick:(id) sender {
 	if (GLANCE == status) {
 		[glancePage.view removeFromSuperview];
 		[self profileVersion];
 	} else if (ADDFRIENDS == status) {
 		[addFriends.view removeFromSuperview];
 		[self glanceVersion];
+	} else if (FRIENDEVENTS == status) {
+		[userContent getEvents:[User getUser].ID];
+		[self profileVersion];
 	}
 }
 
--(IBAction) glanceButtonClick:	(id) sender {
+-(IBAction) glanceButtonClick:(id) sender {
 	if(nil == glancePage) {
 		glancePage = [[GlancePage alloc]
 				  initWithNibName:@"GlancePage" bundle:[NSBundle mainBundle]];
@@ -150,6 +154,12 @@
 	[userContent.view addSubview:glancePage.view];
 	[self glanceVersion];
 
+}
+
+- (void) friendEventsVersion:(unsigned long) _friendId {
+	status = FRIENDEVENTS;
+	[glancePage.view removeFromSuperview];
+	[userContent getEvents:_friendId];
 }
 
 - (IBAction) addFriendsButtonClick:	(id) sender {

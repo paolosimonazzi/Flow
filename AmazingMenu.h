@@ -12,7 +12,8 @@ enum MenuStatus {
 	PROFILE = 0,
 	CONTENTS,
 	GLANCE,
-	ADDFRIENDS
+	ADDFRIENDS,
+	FRIENDEVENTS
 };
 
 @class GlancePage, UserContent, AddFriends, Settings;
@@ -22,6 +23,7 @@ enum MenuStatus {
 	int status;
 		
 	GlancePage *glancePage;
+	
 }
 
 @property (nonatomic, retain) IBOutlet UIButton *backButton;
@@ -38,11 +40,12 @@ enum MenuStatus {
 
 - (void) contentsFeedVersion;
 - (void) profileVersion;
+- (void) friendEventsVersion:(unsigned long)_friendId;
 
--(IBAction) backButtonClick:	(id) sender;
--(IBAction) glanceButtonClick:	(id) sender;
+-(IBAction) backButtonClick:		(id) sender;
+-(IBAction) glanceButtonClick:		(id) sender;
 -(IBAction) addFriendsButtonClick:	(id) sender;
--(IBAction) dotsButtonClick:	(id) sender;
+-(IBAction) dotsButtonClick:		(id) sender;
 
 - (UIView*) getLoadingPage;
 

@@ -21,7 +21,7 @@
 @implementation UserContent
 
 @synthesize labelFirstName, loggedInUser, profilePic,
-gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, loading, splashView, fakeButton, labelPlace, labelTime, refreshBackground, refreshLabel, refreshActivityIndicator, waveLine, backgroundWaveLine;
+gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, loading, splashView, fakeButton, labelPlace, labelTime, refreshBackground, refreshLabel, refreshActivityIndicator, waveLine, backgroundWaveLine, friendPic;
 
 
 - (void) createCustomFBLogin {
@@ -128,16 +128,9 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	gpsManager = [[GPS alloc] init];
 	profileView.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 	
+	scrollView.userContentRef = self;
 
 	[scrollView addEvent:profileView];
-
-	//[self scrollAtPage:9];
-	
-	//[self scrollAtPage:1];
-	
-	//contentPages = [[NSMutableArray alloc] initWithObjects:profileView, nil];
-	
-	//[self menuCreation];
 	
 	UIFont* font = [UIFont fontWithName:@"BrandonGrotesque-Bold" size:20];
 	NSArray *names = [UIFont fontNamesForFamilyName:@"Brandon Grotesque"];
@@ -206,8 +199,9 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	[scrollView addSubview:event];
 }
 */
-- (void)getEvents {
-	
+- (void) getEvents:(unsigned long)_userId {
+	lastUser = _userId;
+	[refreshActivityIndicator startAnimating];
 	[scrollView flushEvents];
 	
 	scrollView.loading = loading = YES;
@@ -221,7 +215,18 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	NSDate *today = [NSDate dateWithTimeIntervalSinceNow:0];
 	NSDate *h24Early = [NSDate dateWithTimeIntervalSinceNow:-266400]; //-86400
 	//NSLog(@"time start: %d time stop %d", (int)[dateStart timeIntervalSince1970], (int)[dateStop timeIntervalSince1970]);
-	[someDataConnection getEvents:h24Early stop:today];
+	[someDataConnection getEvents:_userId start:h24Early stop:today];
+}
+- (void) setProfile:(NSDictionary*)_profileData {
+	
+	NSDictionary *profile = [_profileData objectForKey:@"profile"];
+
+	self.userName.text = [profile objectForKey:@"firstName"];
+	
+	labelPlace.text = [_profileData objectForKey:@"recentLocationName"];
+	labelTime.text	= [_profileData objectForKey:@"recentLocationTime"];
+	
+	[friendPic setImage:[UIImage imageNamed:@"profile_placeholder"]];
 	
 }
 
@@ -238,19 +243,20 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 													   error:&error];
 	NSArray *array	= [dict objectForKey:@"eventViews"];
 	
+	NSDictionary *profile = [dict objectForKey:@"profile"];
+	NSLog(@"friend image: %@", [profile objectForKey:@"imageUrl"]);
+	[friendPic loadImageAsync:[profile objectForKey:@"imageUrl"] withSpinner:NO];
+	self.userName.text = [profile objectForKey:@"firstName"];
+	
 	labelPlace.text = [dict objectForKey:@"recentLocationName"];
 	labelTime.text	= [dict objectForKey:@"recentLocationTime"];
-
-	loading = NO;
-	numberOfEvents = [array count];
-	//numberOfEvents = 2;
-	numberOfPages = numberOfEvents/2;
-	NSLog(@"num of events: %d", numberOfEvents);
-	//[self configureScrollContent:numberOfEvents];
-	//[scrollView setSize:numberOfPages];
-	//[self addEvent:profileView atPage:0];
-	[scrollView addEvent:profileView];
 	
+	numberOfEvents = [array count];
+	numberOfPages = numberOfEvents/2;
+	scrollView.numPages = numberOfPages;
+	
+	NSLog(@"num of events: %d", numberOfEvents);
+	NSMutableArray *events = [[NSMutableArray alloc] initWithCapacity:0];
 	for (int idx = 0; idx < numberOfEvents; idx+=2) {
 		
 		ContentPage *son = [[ContentPage alloc]	initWithNibName:@"ContentPage" bundle:[NSBundle mainBundle]];
@@ -259,18 +265,21 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 		if (idx < [array count]-1) {
 			[son loadContent:SECONDCONTENT withData:[array objectAtIndex:idx+1]];
 		}
+		/*
 		if (idx>16)
 			break;
-		
-		//[self addEvent:son.view atPage:idx/2+1];
-		[scrollView addEvent:son.view];
-
+		 */
+		//[scrollView addEvent:son.view];
+		[events addObject:son.view];
 	}
+	[scrollView addEvents:events];
+
 	NSLog(@"waveLine: %@", [dict objectForKey:@"wavelineImageUrl"]);
 	[waveLine loadWaveLine:[dict objectForKey:@"wavelineImageUrl"]];
 
 	[refreshActivityIndicator stopAnimating];
-	[scrollView scrollAtPage:0];
+	//[scrollView scrollAtPage:0];
+	scrollView.loading = NO;
 }
 #pragma mark -
 
@@ -292,10 +301,10 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	NSNumber *userId = [userData objectForKey:@"id"];
 	NSLog(@"idBack: %d", [userId integerValue]);
 	
-	[User getUser].ID = [userId integerValue];
+	[User getUser].ID = [userId integerValue]; //32769;//
 
-	[self getEvents];
-
+	[self getEvents:[User getUser].ID];
+	
 }
 
 - (void)loginViewFetchedUserInfo:(FBLoginView *)loginView
@@ -308,7 +317,7 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
     // causes the control to fetch and display the profile picture for the user
 	self.profilePic.pictureCropping = FBProfilePictureCroppingSquare;
 	//profilePic.bounds = CGRectMake(0, 0, 220, 220);
-    self.profilePic.profileID = user.id;
+    //self.profilePic.profileID = user.id;
 	self.userName.text	= user.first_name;
 	self.userName.font = [UIFont fontWithName:@"BrandonGrotesque-Light" size:23];
     self.loggedInUser	= user;
@@ -337,84 +346,21 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
     self.loggedInUser = nil;
 	NSLog(@"Logged out");
 }
-#pragma mark -
 
+#pragma mark -
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-- (IBAction)postPhotoClick:(UIButton *)sender {
-	/*
-	 AppDelegate *appDelegate = [[UIApplication sharedApplication]delegate];
-	
-	if (appDelegate.session.state != FBSessionStateCreated) {
-		// Create a new, logged out session.
-		appDelegate.session = [[FBSession alloc] init];
-	}
-	
-	// if the session isn't open, let's open it now and present the login UX to the user
-	[appDelegate.session openWithCompletionHandler:^(FBSession *session,
-													 FBSessionState status,
-													 NSError *error) {
-		// and here we make sure to update our UX according to the new session state
-		[self updateView];
-	}];
-*/
-	
-}
-
+/*
 - (IBAction)refresh:(UIButton *)sender {
 //	[self scrollAtRefreshing];
 	//scrollView.contentOffset = CGPointMake(2910, 0);
 }
-/*
-#pragma mark - Scrolling Stuff
+ */
+- (void) refresh {
+	[self getEvents:lastUser];
 
-- (void)scrollViewWillBeginDecelerating:(UIScrollView *)_scrollView {
-	
 }
-
-
-- (void) refreshTimer:(NSTimer*)_timer {
-	loading = NO;
-	//scrollView.contentOffset = CGPointMake(2880, 0);
-}
-- (void) scrollViewDidScroll:(UIScrollView *)scrollView {
-	
-	NSLog(@"%f", scrollView.contentOffset.x);
-	if ( scrollView.contentOffset.x > 380) { //2910
-		
-		if (!loading) {
-			//[self getEvents];
-		}
-	}
-	if (loading) {
-		//scrollView.contentOffset = CGPointMake((numberOfEvents-1)*320, 0);
-		NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:0.5
-														  target:self
-														selector:@selector(refreshTimer:)
-														userInfo:nil
-														 repeats:NO];
-		//[refreshActivityIndicator startAnimating];
-	}
-	int page = scrollView.contentOffset.x*0.003 + 0;
-	//NSLog(@"scroll: %f, page: %d", scrollView.contentOffset.x, page);
-	//[waveLine setMarkerAtPage:page];
-}
-
-- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
-	
-	NSLog(@"finish");
-	
-}
-
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-	
-	//[waveLine setMarkerAtPage:scrollView.contentOffset.x/480];
-}
-
-
-#pragma mark -
-*/
 @end

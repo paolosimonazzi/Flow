@@ -11,6 +11,7 @@
 #import "Connection.h"
 #import "ContentPage.h"
 #import "AmazingMenu.h"
+#import "UserContent.h"
 
 @interface GlancePage ()
 
@@ -90,6 +91,12 @@
     
     int selectedRow = indexPath.row;
     NSLog(@"touch on row %d", selectedRow);
+	NSDictionary *user = [usersArray objectAtIndex:indexPath.row];
+	NSNumber *userId = [user objectForKey:@"id"];
+	NSLog(@"friend's ID: %lu", [userId unsignedLongValue]);
+	
+	[menuRef.userContent setProfile:[usersArray objectAtIndex:indexPath.row]];
+	[menuRef friendEventsVersion:[userId unsignedLongValue]];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -122,6 +129,7 @@
 	
 	NSDictionary *user = [usersArray objectAtIndex:indexPath.row];
 	NSNumber *userId = [user objectForKey:@"id"];
+	NSLog(@"friend's ID: %lu", [userId unsignedLongValue]);
 	
 	NSDictionary *userProfile = [user objectForKey:@"profile"];
 	

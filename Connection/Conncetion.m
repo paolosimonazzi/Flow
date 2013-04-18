@@ -216,13 +216,13 @@
 	}
 }
 
-- (void) getEvents:(NSDate*)start stop:(NSDate*) stop {
+- (void) getEvents:(unsigned long)_user start:(NSDate*)_start stop:(NSDate*)_stop {
 	
-	NSString *start_str = [NSString stringWithFormat:@"%d000", (int)[start timeIntervalSince1970]];
+	NSString *start_str = [NSString stringWithFormat:@"%d000", (int)[_start timeIntervalSince1970]];
 	
-	NSString *stop_str = [NSString stringWithFormat:@"%d000", (int)[stop timeIntervalSince1970]];
+	NSString *stop_str = [NSString stringWithFormat:@"%d000", (int)[_stop timeIntervalSince1970]];
 	
-	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/event/user-%lu/eventFeedPage-%@to%@?wl_width=800&wl_height=200", [User getUser].ID, start_str, stop_str];
+	NSString *urlRequest_str = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/event/user-%lu/eventFeedPage-%@to%@?wl_width=800&wl_height=200", _user, start_str, stop_str];
 	
 	NSLog(@"events request: %@", urlRequest_str);
 

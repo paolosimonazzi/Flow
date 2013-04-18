@@ -123,7 +123,7 @@
 	 
 	self.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 */
-	
+	//[self setImage:[UIImage imageNamed:@"profile_placeholder"]];
 	Connection *connectionForTheImage = [[Connection alloc] initWithTarget:self withSelector:@selector(contentsBack:)];
 	[connectionForTheImage loadImage:_url];
 	

@@ -11,7 +11,7 @@
 
 #import "Connection.h"
 
-@class AmazingMenu, GlancePage, GraphNavitor, GraphNavigatorViewController, ScrollableEvents;
+@class AmazingMenu, GlancePage, GraphNavitor, GraphNavigatorViewController, ScrollableEvents, AsynchUIImageView;
 
 
 @class GPS;
@@ -22,19 +22,23 @@
 	AmazingMenu		*menu;
 	int				numberOfEvents;
 	int				numberOfPages;
+	unsigned long	lastUser;
 }
 - (IBAction)postPhotoClick:	(UIButton *)sender;
-- (IBAction)refresh:		(UIButton *)sender;
 - (void)	scrollAtPage:		(int) page;
+- (void)	getEvents:(unsigned long) _userId;
 
 
 @property (strong, nonatomic) IBOutlet FBProfilePictureView *profilePic;
+@property (nonatomic, retain) IBOutlet AsynchUIImageView	*friendPic;
+
 @property (strong, nonatomic) IBOutlet UILabel				*labelFirstName;
 
 @property (nonatomic, retain) IBOutlet UIView				*refreshBackground;
 @property (nonatomic, retain) IBOutlet UIImageView			*refreshLabel;
 @property (nonatomic, retain) IBOutlet UIActivityIndicatorView	*refreshActivityIndicator;
 
+- (void) refresh;
 
 @property (strong, nonatomic) IBOutlet UILabel				*labelPlace;
 @property (strong, nonatomic) IBOutlet UILabel				*labelTime;
@@ -64,4 +68,7 @@
 @property (nonatomic, retain) IBOutlet UIPickerView			*usersPicker;
 
 @property (nonatomic, assign) BOOL loading;
+
+- (void) setProfile:(NSDictionary*)_profileData;
+
 @end

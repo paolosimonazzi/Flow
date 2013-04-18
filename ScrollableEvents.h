@@ -8,17 +8,23 @@
 
 #import <UIKit/UIKit.h>
 
+@class UserContent;
+
 @interface ScrollableEvents : UIScrollView  <UIScrollViewDelegate> {
 
 	int pages;
 	NSMutableArray	*contentPages;
+	BOOL loading;
 }
-@property (nonatomic, assign) int loading;
+//@property (nonatomic, assign) int loading;
+@property (nonatomic, retain) UserContent *userContentRef;
 
 - (void) scrollAtPage:	(int) _page;
-
 - (void) addEvent:		(UIView*) event;
-- (void) flushEvents;
+- (void) addEvents:		(NSArray*) _events;
 
+- (void) flushEvents;
+@property (nonatomic, assign) BOOL loading;
+@property (nonatomic, assign) int  numPages;
 
 @end
