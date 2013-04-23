@@ -132,6 +132,8 @@
 -(IBAction) backButtonClick:(id) sender {
 	if (GLANCE == status) {
 		[glancePage.view removeFromSuperview];
+		if (addFriends)
+			[addFriends.view removeFromSuperview];
 		[self profileVersion];
 	} else if (ADDFRIENDS == status) {
 		[addFriends.view removeFromSuperview];

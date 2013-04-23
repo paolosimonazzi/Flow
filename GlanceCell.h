@@ -28,6 +28,9 @@
 
 @property (nonatomic, retain) IBOutlet UILabel  *name;
 
+@property (nonatomic, retain) IBOutlet UILabel  *time;
+@property (nonatomic, retain) IBOutlet UILabel  *where;
+
 -(IBAction) acceptClick:	(id) sender;
 -(IBAction) declineClick:	(id) sender;
 

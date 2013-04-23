@@ -47,12 +47,12 @@ int threshold = 0;
 
 - (void) setSize:(int)_pages {
 	pages = _pages;
-	int sizeOfcontent = (_pages+1) * 320;//+1
+	int sizeOfcontent = (_pages + 1) * 320;//+1
 	self.contentSize = CGSizeMake(sizeOfcontent, 305);
 	//threshold = pages>1?(pages)*320+refreshAsset:320+refreshAsset;
-	threshold = pages*320+refreshAsset;
-	int limit = pages * 320;
-	CGRect scrollRect = CGRectMake (limit, 50, 320, 302);
+	threshold = (pages)*320 + refreshAsset; //-1
+	int limit = (pages) * 320; //-1
+	CGRect scrollRect = CGRectMake (limit, 0, 320, 302);// 0->50
     [self scrollRectToVisible:scrollRect animated:NO];
 }
 
@@ -80,15 +80,19 @@ int threshold = 0;
 	
 	int idz = 0;
 	pages += [_events count];
-	for (int idx = [_events count]; idx > 0; --idx) {
-		[contentPages addObject:[_events objectAtIndex:idz]];
+	int eventsSize = [_events count];
+	for (int idx=0; idx<[_events count];++idx) {
+		[contentPages addObject:[_events objectAtIndex: eventsSize - idx - 1]];
+	}
+	
+	for (int idx = pages-1; idx >= 0; --idx) {
 		UIView *page = [contentPages objectAtIndex:idz];
 		CGRect pageRect = page.frame;
-		page.frame = CGRectMake(320*(idx+1), pageRect.origin.y, pageRect.size.width, pageRect.size.height);
+		page.frame = CGRectMake(320*(idx+1), pageRect.origin.y, pageRect.size.width, pageRect.size.height); //+1
 		[self addSubview:page];
 		idz++;
 	}
-
+	
 	[self setSize:pages];
 	//NSLog(@"total pages: %d", pages);
 }
@@ -102,7 +106,7 @@ int threshold = 0;
 	for (int idx = pages; idx > 0; --idx) {
 		UIView *page = [contentPages objectAtIndex:idz];
 		CGRect pageRect = page.frame;
-		page.frame = CGRectMake(320*idx, pageRect.origin.y, pageRect.size.width, pageRect.size.height);
+		page.frame = CGRectMake(320*(idx+1), pageRect.origin.y, pageRect.size.width, pageRect.size.height);
 		idz++;
 	}
 	
@@ -127,14 +131,11 @@ BOOL timerExist = NO, dragging = NO;
 bool blockRefreshing = NO;
 NSTimer *timer = nil;
 
-/*
-- (void) refreshTimer:(NSTimer*)_timer {
-	self.contentOffset = CGPointMake((pages)*320, 0);
-	NSLog(@"offset: %f", self.contentOffset);
-	blockRefreshing = NO;
-	timer = nil;
+
+- (void) bounceCall:(NSTimer*)_timer {
+	self.bounces = YES;
 }
- */
+ 
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView {
 	
 	static int refThreshold = -1;
@@ -145,40 +146,30 @@ NSTimer *timer = nil;
 		return;
 	}
 	if ( scrollView.contentOffset.x > threshold) { //2910
-		//[userContentRef refresh];
 		refThreshold = threshold;
-		if (!blockRefreshing) {
-			/*
-			NSLog(@" ** LOADING EVENTS **");
-			[userContentRef refresh];
-			 */
-		}
 		blockRefreshing = YES;
+		self.bounces = YES;
 	}
 	if (blockRefreshing) {
 		self.contentOffset = CGPointMake(refThreshold, 0);
 		fuckingCounter++;
+		fuckingCounter2 = 1;
 		
-		if (fuckingCounter>20) {
+		if (fuckingCounter > 40) {
 			blockRefreshing = NO;
-			fuckingCounter2++;
-			//self.contentOffset = CGPointMake((pages)*320, 0);
 			
 			NSLog(@" ** LOADING EVENTS **");
 			[userContentRef refresh];
 			fuckingCounter = 0;
-			//self.contentOffset = CGPointMake((pages)*320, 0);
+			self.bounces = NO;
+			timer = [NSTimer scheduledTimerWithTimeInterval:2//60
+											   target:self
+												   selector:@selector(bounceCall:)
+									
+												   userInfo:nil
+											  repeats:NO];
 		}
 	}
-	if (fuckingCounter2)
-		fuckingCounter2++;
-	if (fuckingCounter2>60) {
-		fuckingCounter2 = 0;
-		//self.contentOffset = CGPointMake((pages)*320, 0);
-	}
-	//int page = scrollView.contentOffset.x * 0.003 + 0;
-	//NSLog(@"scroll: %f, page: %d", scrollView.contentOffset.x, page);
-	//[waveLine setMarkerAtPage:page];
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {

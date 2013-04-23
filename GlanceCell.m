@@ -13,7 +13,7 @@
 #define XGRAPHTRANSLATIION 400
 @implementation GlanceCell
 
-@synthesize profilePic, mask, graphPic, acceptButton, declineButton, row, GlancePageRef;
+@synthesize profilePic, mask, graphPic, acceptButton, declineButton, row, GlancePageRef, time, where;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -22,7 +22,6 @@
         // Initialization code
 		NSArray *nibArray = [[NSBundle mainBundle] loadNibNamed:@"GlanceCell" owner:self options:nil];
 		self = [nibArray objectAtIndex:0];
-		
     }
     return self;
 }

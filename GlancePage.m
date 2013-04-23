@@ -145,6 +145,9 @@
 	
 	NSString *fStatus = [user objectForKey:@"friendshipStatus"];
 
+	myCell.time.text = [user objectForKey:@"recentLocationName"];
+	myCell.where.text = [user objectForKey:@"recentLocationTime"];
+	
 	if ([fStatus isEqualToString:@"REQUEST_RECEIVED"]) {
 		[myCell acceptanceVersion];
 	}

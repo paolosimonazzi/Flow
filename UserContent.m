@@ -93,13 +93,13 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	waveLine = [[GraphNavigatorViewController alloc] initWithNibName:@"GraphNavigatorViewController" bundle:[NSBundle mainBundle]];
 	CGRect waveLineRect = waveLine.view.frame;
 	waveLine.userContentRef = self;
+	
 	if ([self hasFourInchDisplay]) {
 		waveLine.view.frame = CGRectMake(0, 423, waveLineRect.size.width, waveLineRect.size.height);
 	} else {
 		waveLine.view.frame = CGRectMake(0, 335, waveLineRect.size.width, waveLineRect.size.height);
 	}
 	[self.view addSubview:waveLine.view];
-
 }
 /*
 - (void) configureScrollContent:(int) _numEvents {
@@ -108,7 +108,7 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	scrollView.contentSize = CGSizeMake(sizeOfcontent, 305);
 	
 }
- */
+*/
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -176,7 +176,7 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 }
 
 - (void) scrollAtRefreshing {
-	CGRect scrollRect = CGRectMake(2050, 50, 320, 302);
+	CGRect scrollRect = CGRectMake(2050, 50, 320, 302); //302
     [scrollView scrollRectToVisible:scrollRect animated:YES];
 }
 /*
@@ -207,6 +207,7 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	
 	scrollView.loading = loading = YES;
 	[waveLine blankWaveLine];
+	[friendPic placeHolder];
 	Connection *someDataConnection = [[Connection alloc] initWithTarget:self withSelector:@selector(eventsBack:)];
 
 	NSString *dateStartStr = @"20130307";
@@ -300,9 +301,8 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	NSLog(@"idBack: %d", [userId integerValue]);
 	
 	[User getUser].ID = [userId integerValue]; //32769;//
-
+	[User getUser].ID = 262144;
 	[self getEvents:[User getUser].ID];
-	
 }
 
 - (void)loginViewFetchedUserInfo:(FBLoginView *)loginView

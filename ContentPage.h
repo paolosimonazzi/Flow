@@ -15,6 +15,7 @@
 
 - (void) loadImageAsync:(NSString*)_url withSpinner:(BOOL) _spinner;
 - (void) blankImage;
+- (void) placeHolder;
 
 @property (nonatomic, retain)	UIActivityIndicatorView *activityIndicator;
 

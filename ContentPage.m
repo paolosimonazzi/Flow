@@ -17,12 +17,22 @@
 
 @synthesize image1, image2, street1, street2, subtitle1_1, subtitle1_2, subtitle2_1, subtitle2_2;
 
+/*
+- (id)initWithCoder:(NSCoder *)aDecoder {
+	
+	if(self = [super initWithCoder:aDecoder]) {
+		//self.instanceVariable = [aDecoder decodeObjectForKey:INSTANCEVARIABLE_KEY];
+	}
+	return self;
+}
+*/
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
 		self.view.backgroundColor = [UIColor colorWithRed:140.0/255.0 green:204.0/255.0 blue:179.0/255.0 alpha:1.0];
+		
     }
     return self;
 }
@@ -35,17 +45,25 @@
 	NSString *street_str = [[_dict objectForKey:@"location"] objectForKey:@"address"];
 
 	NSString *imageUrl;
-	
+	BOOL iphone5 = [self hasFourInchDisplay];
+
 	if ([url_str rangeOfString:@"place"].location == NSNotFound) {
 		//NSLog(@"street!");
-		imageUrl = [url_str stringByReplacingOccurrencesOfString:@"200x200" withString:@"640x336"];
+		if (iphone5) {
+			imageUrl = [url_str stringByReplacingOccurrencesOfString:@"200x200" withString:@"640x408"];
+		} else {
+			imageUrl = [url_str stringByReplacingOccurrencesOfString:@"200x200" withString:@"640x306"];
+		}
 	} else {
 		//NSLog(@"place!");
-		imageUrl = [url_str stringByReplacingOccurrencesOfString:@"height=200" withString:@"width=640"];
+		if (iphone5) {
+			imageUrl = [url_str stringByReplacingOccurrencesOfString:@"height=200" withString:@"width=640"];
+		} else {
+			imageUrl = [url_str stringByReplacingOccurrencesOfString:@"height=200" withString:@"width=640"];
+		}
 	}
 	
 	//NSLog(@"%@", imageUrl);
-	
 	if (_num) {
 		
 		[image1 loadImageAsync:	imageUrl withSpinner:YES];
@@ -65,9 +83,26 @@
  [image2 loadImageAsync:[url_str stringByReplacingOccurrencesOfString:@"200x200" withString:@"640x336"]];
  */
 
-- (void)viewDidLoad
-{
+- (BOOL)hasFourInchDisplay {
+    return ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone && [UIScreen mainScreen].bounds.size.height == 568.0);
+}
+
+- (void)viewDidLoad {
     [super viewDidLoad];
+	
+	if ([self hasFourInchDisplay]) {
+		self.view.frame = CGRectMake(0, 0, 320, 400);
+		image1.frame = CGRectMake(0, 0, 320, 204);
+		image2.frame = CGRectMake(0, 204, 320, 180);
+		//street1.frame = CGRectMake(40, 100, 200, 30);
+
+	} else {
+		//street1.frame = CGRectMake(40, 100, 200, 30);
+		self.view.frame = CGRectMake(0, 0, 320, 305);
+		image1.frame = CGRectMake(0, 0, 320, 153);
+		image2.frame = CGRectMake(0, 153, 320, 153);
+	}
+
 	//self.view.frame = CGRectMake(0, 0, 320, 383);
     // Do any additional setup after loading the view from its nib.
 }
@@ -101,6 +136,7 @@
 	self.alpha = 1;
 	
 	[UIView commitAnimations];
+
 }
 
 - (void) contentsBack:(NSData*)_data {
@@ -119,6 +155,10 @@
 - (void) blankImage {
 	[self setImage:nil];
 }
+- (void) placeHolder {
+	[self setImage:[UIImage imageNamed:@"profile_placeholder"]];
+}
+
 - (void) loadImageAsync:(NSString*)_url withSpinner:(BOOL) _spinner {
 	/*
 	self.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:0.0];
@@ -141,7 +181,7 @@
 	
 	[self addSubview:activityIndicator];
 	[activityIndicator stopAnimating];
-
+	
 }
 
 @end
