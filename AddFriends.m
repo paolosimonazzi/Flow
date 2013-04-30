@@ -16,7 +16,7 @@
 @end
 
 @implementation AddFriends
-@synthesize friendsToAddTable, usersArray, loadingPage, friends, labelForFriends;
+@synthesize friendsToAddTable, usersArray, loadingPage, friends, labelForFriends, bottomLine;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -72,6 +72,9 @@
 	[conn loadUsersNetwork];
 	
 }
+- (BOOL)hasFourInchDisplay {
+    return ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone && [UIScreen mainScreen].bounds.size.height == 568.0);
+}
 
 - (void) viewDidLoad
 {
@@ -83,6 +86,14 @@
     // Do any additional setup after loading the view from its nib.
 	friends = [[NSMutableArray alloc] initWithCapacity:0];
 	friendsToInvite = [[NSMutableArray alloc] initWithCapacity:0];
+	if ([self hasFourInchDisplay]) {
+		self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y+44, self.view.frame.size.width, self.view.frame.size.height+88);
+		self.bottomLine.frame = CGRectMake(bottomLine.frame.origin.x, bottomLine.frame.origin.y+88, bottomLine.frame.size.width, bottomLine.frame.size.height);
+		
+		self.labelForFriends.frame = CGRectMake(labelForFriends.frame.origin.x, labelForFriends.frame.origin.y+88, labelForFriends.frame.size.width, labelForFriends.frame.size.height);
+	} else {
+		
+	}
 }
 
 - (void)didReceiveMemoryWarning

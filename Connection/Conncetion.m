@@ -111,7 +111,54 @@
 	} else {
 	}
 }
+//- (void) getEvents:(unsigned long)_user start:(NSDate*)_start stop:(NSDate*)_stop {
 
+- (void) sleepEventWithBegin:(NSDate*)_start stop:(NSDate*)_stop {
+
+	NSError* error;
+
+	NSMutableDictionary *sleepData = [NSMutableDictionary dictionaryWithCapacity:0];
+	//[data setObject:@"POSITION_TRACE" forKey:@"@class"];
+	
+	[sleepData setObject:@"SLEEP_TRACE" forKey:@"@class"];
+	
+	unsigned long begin = [_start timeIntervalSince1970];
+	
+	[sleepData setObject:[NSString stringWithFormat:@"%lu000", begin] forKey:@"begin"];
+	
+	unsigned long stop = [_stop timeIntervalSince1970];
+	
+	[sleepData setObject:[NSString stringWithFormat:@"%lu000", stop] forKey:@"time"];
+	
+	[sleepData setObject:[NSString stringWithFormat:@"%lu", [User getUser].ID] forKey:@"userId"];
+	
+	NSData* jsonData = [NSJSONSerialization dataWithJSONObject:sleepData
+                                                       options:NSJSONWritingPrettyPrinted
+                                                         error:&error];
+	
+		
+	NSString *strJson = [NSString stringWithUTF8String:[jsonData bytes]];
+	
+	NSLog(@"sleepJsonData: %@", strJson);
+	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://glance-server.herokuapp.com/services/trace"]
+															  cachePolicy:NSURLRequestUseProtocolCachePolicy
+														  timeoutInterval:60.0];
+	[theRequest setHTTPMethod:@"POST"];
+	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+	[theRequest setValue:[NSString stringWithFormat:@"%d", [jsonData length]] forHTTPHeaderField:@"Content-Length"];
+	[theRequest setHTTPBody: jsonData];
+	
+	theLastRequest = theRequest;
+	
+	NSURLConnection *theConnection  = [[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
+	if (theConnection) {
+		receivedData = [NSMutableData data];
+	} else {
+	}
+
+}
+/*
 - (void) sleepEvent:(BOOL) _begin withTime:(NSTimeInterval) _time {
 	
 	NSMutableDictionary *data = [GPS getLastGpsPosition];
@@ -169,7 +216,7 @@
 	} else {
 	}
 }
-
+*/
 - (void) retryBitch {
 	NSURLConnection *theConnection  = [[NSURLConnection alloc] initWithRequest:theLastRequest delegate:self];
 	if (theConnection) {

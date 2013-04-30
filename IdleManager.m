@@ -50,7 +50,7 @@
 		Connection *conn = [[Connection alloc] initWithTarget:self withSelector:@selector(wakeUpResponse:)];
 		conn.retry = 5;
 		NSDate *now = [NSDate dateWithTimeIntervalSinceNow:0];
-		[conn sleepEvent:NO withTime:[now timeIntervalSince1970]];
+		//[conn sleepEvent:NO withTime:[now timeIntervalSince1970]];
 	}
 }
 
@@ -89,8 +89,8 @@
 		if (timeElapsed > SLEEPINGTIME) {
 			Connection *conn = [[Connection alloc] initWithTarget:self withSelector:@selector(sleepResponse:)];
 			conn.retry = 5;
-			[conn sleepEvent:YES withTime:timeElapsed];
-			
+			//[conn sleepEvent:YES withTime:timeElapsed];
+			[conn sleepEventWithBegin:idleTime stop:[NSDate dateWithTimeIntervalSinceNow:0]];
 			NSLog(@"sleep event!");
 		}
 		idleTime = [NSDate dateWithTimeIntervalSinceNow:0];

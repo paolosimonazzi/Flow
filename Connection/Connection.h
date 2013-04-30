@@ -38,7 +38,9 @@
 - (void) friendshipDecline:	(unsigned long) userId;
 - (void) retryBitch;
 
-- (void) sleepEvent:		(BOOL) _begin withTime:(NSTimeInterval) _time;
+//- (void) sleepEvent:		(BOOL) _begin withTime:(NSTimeInterval) _time;
+
+- (void) sleepEventWithBegin:(NSDate*)_start stop:(NSDate*)_stop;
 
 
 - (void) loadGlance;

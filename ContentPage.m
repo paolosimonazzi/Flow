@@ -15,7 +15,7 @@
 
 @implementation ContentPage
 
-@synthesize image1, image2, street1, street2, subtitle1_1, subtitle1_2, subtitle2_1, subtitle2_2;
+@synthesize image1, image2, street1, street2, subtitle1_1, subtitle1_2, subtitle2_1, subtitle2_2, dividingLine1, dividingLine2, eventType1, eventType2;
 
 /*
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -62,21 +62,24 @@
 			imageUrl = [url_str stringByReplacingOccurrencesOfString:@"height=200" withString:@"width=640"];
 		}
 	}
-	
+	NSArray *lines = [_dict objectForKey:@"lines"];
 	//NSLog(@"%@", imageUrl);
 	if (_num) {
 		
 		[image1 loadImageAsync:	imageUrl withSpinner:YES];
-		street1.text = [_dict objectForKey:@"title"];
-		subtitle1_1.text = [_dict objectForKey:@"subtitle1"];
-		subtitle1_2.text = [_dict objectForKey:@"subtitle2"];
-
+		//NSString *ptr = [lines objectAtIndex:0];
+		//if ((NSNull *)getCaption == [NSNull null])
+		
+		eventType1.text		= [NSNull null] != [lines objectAtIndex:0]?[lines objectAtIndex:0]:@"";
+		street1.text		= [NSNull null] !=[lines objectAtIndex:1]?[lines objectAtIndex:1]:@"";
+		subtitle1_1.text	= [NSNull null] !=[lines objectAtIndex:2]?[lines objectAtIndex:2]:@"";
+		subtitle1_2.text	= [NSNull null] !=[lines objectAtIndex:3]?[lines objectAtIndex:3]:@"";
 	} else {
 		[image2 loadImageAsync:imageUrl withSpinner:YES];
-		street2.text = [_dict objectForKey:@"title"];
-		subtitle2_1.text = [_dict objectForKey:@"subtitle1"];
-		subtitle2_2.text = [_dict objectForKey:@"subtitle2"];
-
+		eventType2.text		= [NSNull null] != [lines objectAtIndex:0]?[lines objectAtIndex:0]:@"";
+		street2.text		= [NSNull null] !=[lines objectAtIndex:1]?[lines objectAtIndex:1]:@"";
+		subtitle2_1.text	= [NSNull null] !=[lines objectAtIndex:2]?[lines objectAtIndex:2]:@"";
+		subtitle2_2.text	= [NSNull null] !=[lines objectAtIndex:3]?[lines objectAtIndex:3]:@"";
 	}
 }
 /*
@@ -89,15 +92,33 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+	// setting fonts
+	street1.font = [UIFont fontWithName:@"BrandonGrotesque-Black" size:24];//[UIFont fontWithName:@"BrandonGrotesque-MediumItalic" size:18];
+	street2.font = [UIFont fontWithName:@"BrandonGrotesque-Black" size:24];
+	
+	eventType1.font = [UIFont fontWithName:@"BrandonGrotesque-Black" size:16];
+
+	eventType2.font = [UIFont fontWithName:@"BrandonGrotesque-Black" size:16];
+
+	subtitle2_2.font = [UIFont fontWithName:@"BrandonGrotesque-MediumItalic" size:12];
+	subtitle2_1.font = [UIFont fontWithName:@"BrandonGrotesque-MediumItalic" size:12];
+	subtitle1_2.font = [UIFont fontWithName:@"BrandonGrotesque-MediumItalic" size:12];
+	subtitle1_1.font = [UIFont fontWithName:@"BrandonGrotesque-MediumItalic" size:12];
+	
+	int offset4Inch = 40;
 	
 	if ([self hasFourInchDisplay]) {
 		self.view.frame = CGRectMake(0, 0, 320, 400);
 		image1.frame = CGRectMake(0, 0, 320, 204);
 		image2.frame = CGRectMake(0, 204, 320, 180);
-		//street1.frame = CGRectMake(40, 100, 200, 30);
-
+		
+		street2.frame = CGRectMake(street2.frame.origin.x, street2.frame.origin.y+offset4Inch, street1.frame.size.width, street1.frame.size.height);
+		subtitle2_1.frame = CGRectMake(subtitle2_1.frame.origin.x, subtitle2_1.frame.origin.y+offset4Inch, subtitle2_1.frame.size.width, subtitle2_1.frame.size.height);
+		subtitle2_2.frame = CGRectMake(subtitle2_2.frame.origin.x, subtitle2_2.frame.origin.y+offset4Inch, subtitle2_2.frame.size.width, subtitle2_2.frame.size.height);
+		dividingLine2.frame = CGRectMake(dividingLine2.frame.origin.x, dividingLine2.frame.origin.y+offset4Inch, dividingLine2.frame.size.width, dividingLine2.frame.size.height);
 	} else {
-		//street1.frame = CGRectMake(40, 100, 200, 30);
+		//street2.frame = CGRectMake(40, 180, street1.frame.size.width, street1.frame.size.height);
+
 		self.view.frame = CGRectMake(0, 0, 320, 305);
 		image1.frame = CGRectMake(0, 0, 320, 153);
 		image2.frame = CGRectMake(0, 153, 320, 153);

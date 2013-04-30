@@ -32,7 +32,24 @@
 
     // Configure the view for the selected state
 }
+- (void) loadingFriendShipVersion {
+	
+	CGRect graphFrame = graphPic.frame;
+	[UIView beginAnimations:nil context:nil];
+	[UIView setAnimationDuration: 1];
+	[UIView setAnimationBeginsFromCurrentState:YES];
+	[UIView setAnimationDelegate:self];
+	//[UIView setAnimationDidStopSelector:@selector(restorePositionItem2)];
+	
+	graphPic.frame = CGRectMake(graphFrame.origin.x+-XGRAPHTRANSLATIION, graphFrame.origin.y, graphFrame.size.width, graphFrame.size.height);
+	//userSel.frame = CGRectMake(340, 10, 65, 65);
+	//user.alpha = .5;
+	acceptButton.alpha  = 0.0;
+	declineButton.alpha = 0.0;
+	[UIView commitAnimations];
 
+
+}
 - (void) acceptanceVersion {
 	CGRect graphFrame = graphPic.frame;
 	[UIView beginAnimations:nil context:nil];

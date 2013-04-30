@@ -19,7 +19,7 @@
 
 @implementation GlancePage
 
-@synthesize friendsTable, menuRef, loadingPage;
+@synthesize friendsTable, menuRef, loadingPage, bottomLine;
 
 #pragma mark - Connection
 - (void) usersBack:(NSData*)_data {
@@ -68,6 +68,12 @@
 	
 	Connection *friendAccepted = [[Connection alloc] initWithTarget:self withSelector:@selector(friendshipDataBack:)];
 	[friendAccepted friendshipAccept:[ID longValue]];
+	
+	//[friendsTable reloadData];
+	GlanceCell *myCell = [friendsTable cellForRowAtIndexPath:[NSIndexPath indexPathForItem:_row inSection:0]];
+	[myCell loadingFriendShipVersion];
+	//[self loadNetwork];
+	
 	
 }
 - (void) declineFriendship:(int) _row {
@@ -137,7 +143,14 @@
 	cell.selectedBackgroundView.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 
 	[myCell.profilePic loadImageAsync:[userProfile objectForKey:@"imageUrl"] withSpinner:YES];
-	NSString *urlForGraph = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/event/user-%lu/waveline?width=464&height=80", [userId longValue]];
+	NSDate *today = [NSDate dateWithTimeIntervalSinceNow:0];
+	NSDate *h24Earlier = [NSDate dateWithTimeIntervalSinceNow:-86400]; //-86400 //266400
+	
+	NSString *start_str = [NSString stringWithFormat:@"%d000", (int)[today timeIntervalSince1970]];
+	
+	NSString *stop_str = [NSString stringWithFormat:@"%d000", (int)[h24Earlier timeIntervalSince1970]];
+
+	NSString *urlForGraph = [NSString stringWithFormat:@"http://glance-server.herokuapp.com/services/event/user-%lu/waveline-%@to%@?width=464&height=80",  [userId longValue], stop_str, start_str];
 	NSLog(@"string for graph: %@", urlForGraph);
  	//[myCell.graphPic loadImageAsync:[user objectForKey:@"wavelinePreviewUrl"]];
 	[myCell.graphPic loadImageAsync:urlForGraph withSpinner:NO];
@@ -164,10 +177,21 @@
     }
     return self;
 }
+- (BOOL)hasFourInchDisplay {
+    return ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone && [UIScreen mainScreen].bounds.size.height == 568.0);
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+	
+	if ([self hasFourInchDisplay]) {
+		self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y+44, self.view.frame.size.width, self.view.frame.size.height+88);
+		self.bottomLine.frame = CGRectMake(bottomLine.frame.origin.x, bottomLine.frame.origin.y+88, bottomLine.frame.size.width, bottomLine.frame.size.height);
+	} else {
+	
+	}
+	
 	self.friendsTable.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:245.0/255.0 blue:232.0/255.0 alpha:1.0];
 	//friendsTable.delegate = self;
 	

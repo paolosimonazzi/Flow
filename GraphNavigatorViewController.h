@@ -23,7 +23,6 @@
 
 - ( void ) loadWaveLine:(NSString*)_url;
 - ( void ) blankWaveLine;
-//- ( void ) setMarkerAtPage:(int) _page;
 - ( void ) setMarkerAt:(float) _absolutePosition;
 
 @end

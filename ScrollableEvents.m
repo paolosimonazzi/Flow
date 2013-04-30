@@ -46,14 +46,15 @@ const int refreshAsset = 45;
 int threshold = 0;
 
 - (void) setSize:(int)_pages {
-	pages = _pages;
 	int sizeOfcontent = (_pages + 1) * 320;//+1
 	self.contentSize = CGSizeMake(sizeOfcontent, 305);
 	//threshold = pages>1?(pages)*320+refreshAsset:320+refreshAsset;
-	threshold = (pages)*320 + refreshAsset; //-1
-	int limit = (pages) * 320; //-1
+	threshold = (_pages)*320 + refreshAsset; //-1
+	int limit = (_pages) * 320; //-1
 	CGRect scrollRect = CGRectMake (limit, 0, 320, 302);// 0->50
     [self scrollRectToVisible:scrollRect animated:NO];
+	pages = _pages-1;
+
 }
 
 - (void) flushEvents {
@@ -65,6 +66,7 @@ int threshold = 0;
 		[pageToFlush removeFromSuperview];
 		
 	}
+	
 	pages = 0;
 	[contentPages removeAllObjects];
 	[self addEvent:profile];
@@ -79,7 +81,7 @@ int threshold = 0;
 - (void) addEvents:(NSArray*) _events {
 	
 	int idz = 0;
-	pages += [_events count];
+	pages += [_events count]; pages++;
 	int eventsSize = [_events count];
 	for (int idx=0; idx<[_events count];++idx) {
 		[contentPages addObject:[_events objectAtIndex: eventsSize - idx - 1]];
@@ -111,7 +113,7 @@ int threshold = 0;
 	}
 	
 	[self addSubview:_event];
-	[self setSize:pages];
+	[self setSize:pages+1];
 }
 
 /*

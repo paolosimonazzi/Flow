@@ -27,6 +27,9 @@
 
 @property (nonatomic, retain) IBOutlet	UILabel *labelForFriends;
 
+@property (nonatomic, retain) IBOutlet	UIImageView *bottomLine;
+
+
 - (IBAction) inviteFriendsClick:	(id) sender;
 
 - (void)	 friendRequest:		(int) num;

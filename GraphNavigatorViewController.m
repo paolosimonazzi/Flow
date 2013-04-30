@@ -28,11 +28,28 @@
     return self;
 }
 
+- (void) updateTimeLabel {
+
+	float rel = 1 - (sliderRect.origin.x+sliderRect.size.width/2)/320;
+	signed long timeSec = rel * 86400 * -1;
+	NSLog(@"time sec:%ldl", timeSec);
+
+	NSDate *today = [NSDate dateWithTimeIntervalSinceNow:timeSec];
+	NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+	[dateFormat setDateFormat:@"MM/dd/yyyy hh:mma"];
+	NSString *dateString = [dateFormat stringFromDate:today];
+	
+	//[formatter setTimeStyle:kCFDateFormatterFullStyle];//NSDateFormatterMediumStyle];
+
+	timeLabel.text = dateString;
+}
+
 - (void) touchesBegan:(NSSet*)touches withEvent:(UIEvent*)event {
 	UITouch *touch = [touches anyObject];
     sliderRect = slider.frame;
     stripeRect = self.view.frame;
     CGPoint app = [touch locationInView:self.view];
+	[self updateTimeLabel];
 	/*
     if ([self checkBound:app.y])
         return;
@@ -60,7 +77,8 @@ bool fireEnabled = NO;
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
     
     UITouch *touch = [touches anyObject];
-    
+	[self updateTimeLabel];
+
     sliderRect = slider.frame;
     stripeRect = self.view.frame;
     fireEnabled = YES;
@@ -82,7 +100,8 @@ bool fireEnabled = NO;
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    
+	[self updateTimeLabel];
+
     sliderRect = slider.frame;
     stripeRect = self.view.frame;
 	int pageToScrollTo = sliderRect.origin.x * 0.025 + 1;
@@ -109,6 +128,7 @@ bool fireEnabled = NO;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+	timeLabel.font = [UIFont fontWithName:@"BrandonGrotesque-MediumItalic" size:12];
     // Do any additional setup after loading the view from its nib.
 }
 

@@ -22,6 +22,7 @@
 
 - (void) acceptanceVersion;
 - (void) normalVersion;
+- (void) loadingFriendShipVersion;
 
 @property (nonatomic, retain) IBOutlet UIButton *acceptButton;
 @property (nonatomic, retain) IBOutlet UIButton *declineButton;
@@ -33,5 +34,7 @@
 
 -(IBAction) acceptClick:	(id) sender;
 -(IBAction) declineClick:	(id) sender;
+
+
 
 @end

@@ -16,6 +16,7 @@
 }
 
 @property (nonatomic, retain) IBOutlet UITableView *friendsTable;
+@property (nonatomic, retain) IBOutlet UIImageView *bottomLine;
 @property (nonatomic, retain) AmazingMenu *menuRef;
 
 @property (nonatomic, retain) UIView *loadingPage;

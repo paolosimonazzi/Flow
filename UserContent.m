@@ -216,9 +216,9 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	[dateFormat setDateFormat:@"yyyyMMdd"];
 		
 	NSDate *today = [NSDate dateWithTimeIntervalSinceNow:0];
-	NSDate *h24Early = [NSDate dateWithTimeIntervalSinceNow:-86400]; //-86400 //266400
+	NSDate *h24Earlier = [NSDate dateWithTimeIntervalSinceNow:-86400]; //-86400 //266400
 	//NSLog(@"time start: %d time stop %d", (int)[dateStart timeIntervalSince1970], (int)[dateStop timeIntervalSince1970]);
-	[someDataConnection getEvents:_userId start:h24Early stop:today];
+	[someDataConnection getEvents:_userId start:h24Earlier stop:today];
 }
 - (void) setProfile:(NSDictionary*)_profileData {
 	
@@ -256,7 +256,7 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	labelTime.text	= [dict objectForKey:@"recentLocationTime"];
 	
 	numberOfEvents = [array count];
-	numberOfPages = numberOfEvents/2;
+	numberOfPages = numberOfEvents/2+1;
 	scrollView.numPages = numberOfPages;
 	
 	NSLog(@"num of events: %d", numberOfEvents);
@@ -301,7 +301,7 @@ gpsManager, userName, scrollView, profileView, glance, usersPicker, loginview, l
 	NSLog(@"idBack: %d", [userId integerValue]);
 	
 	[User getUser].ID = [userId integerValue]; //32769;//
-	[User getUser].ID = 262144;
+	//[User getUser].ID = 32769;
 	[self getEvents:[User getUser].ID];
 }
 
